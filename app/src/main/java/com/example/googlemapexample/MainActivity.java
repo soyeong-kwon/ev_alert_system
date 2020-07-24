@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-// test here
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback
 {
@@ -311,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED && hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED)
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED && hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED   )
         {
             return true;
         }
@@ -418,4 +417,3 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 }
-
