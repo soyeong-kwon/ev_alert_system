@@ -4676,71 +4676,90 @@ ul.notifications {
     margin: 0 auto;
 }
 
-    .gallerylist > ul {
+    .gallerylist>ul {
         font-size: 0;
     }
 
-        .gallerylist > ul > li {
+         .gallerylist>ul>li {
             display: inline-block;
             vertical-align: top;
             width:33.3%;
         }
 
-            .gallerylist > ul > li > a {
+            .gallerylist>ul>li>a{
                 display: block;
                 width: auto;
                 text-decoration: none;
                 margin: 10px;
+
             }
 
-                .gallerylist > ul > li > a.screen {
+                .gallerylist>ul>li>a.screen {
                     position: relative;
                     overflow: hidden;
                 }
 
-                    .gallerylist > ul > li > a .screen.top {
+            .gallerylist > ul > li > a:hover .bottom{ top: 52%; }    
+            .gallerylist > ul > li > a:hover .top{ bottom: 52%;}
+
+                .gallerylist>ul>li>a .screen::after{
+                    content:'';
+                    display:block;
+                    position: absolute;
+                    top:0;
+                    left:0;
+                    width:100%;
+                    height: 100%;
+                    background: rgba(0,0,0,.5);
+                    z-index:1;
+                    opacity:0;
+                    transition:all .35s;
+                }
+                .gallerylist>ul>li>a:hover .screen::after{
+                    opacity:1;
+                }
+
+
+                    .gallerylist>ul>li>a.screen.top {
                         position: absolute;
                         bottom: 150%;
                         left: 26px;
                         z-index: 2;
-                        color: #E74C3C;
                         font-size: 26px;
                         font-weight: 900;
+                        color: #A97AAD;
                         transition: all .35s;
-                    }
 
-                        .gallerylist > ul > li > a.screen.top:hover {
-                            bottom: 52%;
-                        }
+                     }
 
-                    .gallerylist > ul > li > a .screen.bottom {
+                     .gallerylist>ul>li>a.screen.bottom {
                         position: absolute;
                         top: 150%;
                         left: 26px;
                         z-index: 2;
-                        color: #34495E;
+                        color: #A97AAD;
                         font-size: 12px;
-                        transition: all .35s;
+                        transition: all .35s;   
                     }
+                    
 
-                        .gallerylist > ul > li > a .screen.bottom:hover {
-                            top: 52%;
-                        }
-
-
-
-                    .gallerylist > ul > li > a.screen>img {
+                    .gallerylist>ul>li>a.screen img {
                         width: 100%;
                         border-radius: 20%;
                     }
 
-                .gallerylist > ul > li > a h3 {
-                    font-size: 14px;
-                    text-align: left;
-                    padding: 20px;
-                    color: #666;
-                }
+                    
+                    .gallerylist>ul>li>a h3 {
+                        font-size: 15px;
+                        text-align: center;
+                        padding: 20px;
+                        color: #666;
+                    }
+                    
+                
+                    
 
+        
 .info {
     width: 1250px;
 }
@@ -4750,3 +4769,12 @@ ul.notifications {
         font-size: 12px;
         color: antiquewhite
     }
+
+.contain{
+    width:800px;
+    height:800px;
+    background: gold;
+}
+.contain:hover{
+    background-color: #5b90bf;
+}
