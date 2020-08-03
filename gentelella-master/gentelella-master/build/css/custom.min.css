@@ -4,11 +4,13 @@
 }
 
 .site_title, .x_title h2, table.tile_info td p {
-    text-overflow: ellipsis
+    text-overflow: ellipsis;
+    text-size-adjust:auto;
+    color:#1ABB9C
 }
 
     .detail a, .expand, .jqstooltip, .paging_full_numbers a:hover, .site_title:focus, .site_title:hover, a, a:focus, a:hover {
-        text-decoration: none
+        text-decoration: none;
     }
 
 .byline, .main_menu .fa {
@@ -19,7 +21,8 @@
     color: #73879C
 }
 
-    .daterangepicker .ranges li.active, .daterangepicker .ranges li:hover {
+    .daterangepicker .ranges li.active, .daterangepicker .ranges
+    :hover {
         background: #536A7F;
         border: 1px solid #536A7F;
         color: #fff
@@ -172,6 +175,7 @@
     width: 70px;
     padding: 0;
     z-index: 9999;
+    background:#1ABB9C;
     position: absolute
 }
 
@@ -867,7 +871,7 @@ a {
 
 .site_title {
     font-weight: 400;
-    font-size: 22px;
+    font-size: px;
     width: 100%;
     line-height: 59px;
     display: block;
@@ -966,6 +970,7 @@ a {
 }
 
 .main_menu_side {
+    
     padding: 0
 }
 
@@ -992,8 +997,7 @@ footer {
 }
 
 .degrees:after, .x_content, .x_panel {
-    position: relative;
-    width: 300%;
+    position: relative
 }
 
 @media (min-width:768px) {
@@ -1125,7 +1129,7 @@ h2 {
 }
 
 .x_panel, .x_title {
-    margin-bottom: 10px
+    margin-bottom: 10px;
 }
 
 .accordion .panel-heading {
@@ -1198,10 +1202,6 @@ legend {
 
 .demo-placeholder {
     height: 280px
-}
-
-.notice{
-    width:300%
 }
 
 .profile_details:nth-child(3n) {
@@ -1706,7 +1706,7 @@ ul.to_do {
 }
 
     ul.to_do li {
-        background: #f1d8f8;
+        background: #f3f3f3;
         border-radius: 3px;
         position: relative;
         padding: 7px;
@@ -1850,6 +1850,7 @@ span.right {
     .sidebar-footer a {
         padding: 7px 0 3px;
         text-align: center;
+        width: 25%;
         width: 25%;
         font-size: 17px;
         display: block;
@@ -4668,3 +4669,84 @@ ul.notifications {
 .dataTables_wrapper > .row {
     overflow: auto !important
 }
+
+.gallerylist {
+    max-width: 1250px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+    .gallerylist > ul {
+        font-size: 0;
+    }
+
+        .gallerylist > ul > li {
+            display: inline-block;
+            vertical-align: top;
+            width:33.3%;
+        }
+
+            .gallerylist > ul > li > a {
+                display: block;
+                width: auto;
+                text-decoration: none;
+                margin: 10px;
+            }
+
+                .gallerylist > ul > li > a.screen {
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                    .gallerylist > ul > li > a .screen.top {
+                        position: absolute;
+                        bottom: 150%;
+                        left: 26px;
+                        z-index: 2;
+                        color: #E74C3C;
+                        font-size: 26px;
+                        font-weight: 900;
+                        transition: all .35s;
+                    }
+
+                        .gallerylist > ul > li > a.screen.top:hover {
+                            bottom: 52%;
+                        }
+
+                    .gallerylist > ul > li > a .screen.bottom {
+                        position: absolute;
+                        top: 150%;
+                        left: 26px;
+                        z-index: 2;
+                        color: #34495E;
+                        font-size: 12px;
+                        transition: all .35s;
+                    }
+
+                        .gallerylist > ul > li > a .screen.bottom:hover {
+                            top: 52%;
+                        }
+
+
+
+                    .gallerylist > ul > li > a.screen>img {
+                        width: 100%;
+                        border-radius: 20%;
+                    }
+
+                .gallerylist > ul > li > a h3 {
+                    font-size: 14px;
+                    text-align: left;
+                    padding: 20px;
+                    color: #666;
+                }
+
+.info {
+    width: 1250px;
+}
+
+    .info x_title {
+        width: auto;
+        font-size: 12px;
+        color: antiquewhite
+    }

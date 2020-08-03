@@ -1,9 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\gentelella-master",
-    "\\gentelella-master\\build"
+    "\\production"
   ],
-  "SelectedNode": "\\gentelella-master\\build\\css\\custom.min.css",
+  "SelectedNode": "\\production\\tables.html",
   "PreviewInSolutionExplorer": false
 }
