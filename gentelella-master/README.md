@@ -1,29 +1,29 @@
-## Dajung-Web Server
+# Dajung-Web Server
 
-¼­¹ö ±¸ÃàÁß ...
+ì„œë²„ êµ¬ì¶•ì¤‘ ...
 
-# ¸í·É¾î ¸ğÀ½
+## ëª…ë ¹ì–´ ëª¨ìŒ
 
-**¼­¹ö ½ÇÇà**
+**ì„œë²„ ì‹¤í–‰**
 
 ```
 sudo systemctl strat httpd
 ```
 
-**¼­¹ö Áß´Ü**
+**ì„œë²„ ì¤‘ë‹¨**
 
 ```
 sudo systemctl stop httpd
 ```
 
-**¼­¹ö »óÅÂ**
+**ì„œë²„ ìƒíƒœ**
 
 ```
 sudo systemctl status httpd
 ```
 
-** Database Á¢¼Ó **
+**Database ì ‘ì†**
 
 ```
-mysql -u **name** -p -h **¿£µåÆ÷ÀÎÆ® ÁÖ¼Ò**
+mysql -u **name** -p -h **ì—”ë“œí¬ì¸íŠ¸ ì£¼ì†Œ**
 ```
