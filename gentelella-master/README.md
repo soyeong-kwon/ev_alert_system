@@ -5,7 +5,9 @@
 
 
 
+
 ## 명령어 모음
+
 
 **서버 실행**
 
@@ -13,17 +15,23 @@
 sudo systemctl strat httpd
 ```
 
+
+
 **서버 중단**
 
 ```
 sudo systemctl stop httpd
 ```
 
+
+
 **서버 상태**
 
 ```
 sudo systemctl status httpd
 ```
+
+
 
 **Database 접속**
 
