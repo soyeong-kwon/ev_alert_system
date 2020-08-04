@@ -306,20 +306,12 @@
     float: left
 }
 
-.img-circle.profile_img {
+.profile_img {
     width: 70%;
     margin-top:20px;
-    margin-lsef:15%;
+    margin-left:15%;
     border:1px solid;
     z-index:1000;
-    
-    /* background: #fff;
-    margin-left: 15%;
-    z-index: 1000;
-    position: inherit;
-    margin-top: 20px;
-    border: 1px solid rgba(52,73,94,.44);
-    padding: 4px */
 }
 
 .profile_info {
@@ -4711,7 +4703,7 @@ ul.notifications {
                         z-index: 2;
                         font-size: 26px;
                         font-weight: 900;
-                        color: #FF8000;
+                        color:#000;
                         transition: all .35s;
                         text-decoration: underline;
 
@@ -4722,7 +4714,7 @@ ul.notifications {
                         top: 150%;
                         left: 30px;
                         z-index: 2;
-                        color: #FF8000;
+                        color:#000;
                         font-size: 20px;
                         transition: all .35s;   
                     }
