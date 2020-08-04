@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\production"
+    "\\production",
+    "\\production\\js",
+    "\\production\\js\\datepicker"
   ],
-  "SelectedNode": "\\production\\tables.html",
+  "SelectedNode": "\\production\\js\\datepicker\\daterangepicker.js",
   "PreviewInSolutionExplorer": false
 }
