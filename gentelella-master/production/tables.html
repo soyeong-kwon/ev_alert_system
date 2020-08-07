@@ -151,7 +151,7 @@
                                     $sql = "select *from personinfo";
                                     $res = $conn->query($sql);
                                     ?>
-
+                                    <form method="POST" action="delete.php">
                                 <table class="table table-bordered">
                                     <thead>                                        
                                         <tr>
@@ -159,6 +159,7 @@
                                             <th>이름</th>
                                             <th>긴급자동차 등록번호 (IMEI 코드)</th>
                                             <th>구분</th>
+                                            <th>관리</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -167,17 +168,17 @@
                                         while ($row=mysqli_fetch_array($res))
                                         {?>
                                         <tr>
-                                        
-                                            
+                                            <input type="hidden" name="id" value="<?php echo $row['id']?>">
                                             <th scope="row"> <?php echo $row['id']; ?></th>
                                             <td><?php echo $row['name']; ?></td>
                                             <td><?php echo $row['IMEI']; ?></td>
                                             <td><?php echo $row['cartype']; ?></td>
-                                    
+                                            <td><button type="submit"> 삭제 </button></td>                                    
                                         </tr>
                                     <?php } ?>
                                     </tbody>
                                 </table>
+                                        </form>
 
                             </div>
                         </div>
