@@ -140,8 +140,20 @@
                                 <div class="clearfix"></div>
                             </div>
                             <div class="x_content">
+
+                                <?php
+                                    header("Content-Type: text/html; charset=UTF-8");
+                                    $host = 'dajung-db.c6ivw6dubpql.ap-northeast-2.rds.amazonaws.com';
+                                    $user = 'dajung';
+                                    $pw = '12345678';
+                                    $dbName = 'DajungDB';
+                                    $conn = new mysqli($host, $user, $pw, $dbName);
+                                    $sql = "select *from personinfo";
+                                    $res = $conn->query($sql);
+                                    ?>
+
                                 <table class="table table-bordered">
-                                    <thead>
+                                    <thead>                                        
                                         <tr>
                                             <th>#</th>
                                             <th>이름</th>
@@ -150,36 +162,20 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        
+                                    <?php
+                                        while ($row=mysqli_fetch_array($res))
+                                        {?>
                                         <tr>
-                                            <th scope="row"> 1</th>
-                                            <td>박지민</td>
-                                            <td>19991213</td>
-                                            <td>구급차</td>
+                                        
+                                            
+                                            <th scope="row"> <?php echo $row['id']; ?></th>
+                                            <td><?php echo $row['name']; ?></td>
+                                            <td><?php echo $row['IMEI']; ?></td>
+                                            <td><?php echo $row['cartype']; ?></td>
+                                    
                                         </tr>
-                                        <tr>
-                                            <th scope="row"> 2</th>
-                                            <td>권소영</td>
-                                            <td>19990817</td>
-                                            <td>경찰차</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"> 3</th>
-                                            <td>김나은</td>
-                                            <td>19991203</td>
-                                            <td>구급차</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"> 4</th>
-                                            <td>김유정</td>
-                                            <td>19990330</td>
-                                            <td>응급차</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"> 5</th>
-                                            <td>유재민</td>
-                                            <td>19980209</td>
-                                            <td>오이오이</td>
-                                        </tr>
+                                    <?php } ?>
                                     </tbody>
                                 </table>
 
