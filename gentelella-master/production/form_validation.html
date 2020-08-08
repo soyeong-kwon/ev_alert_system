@@ -136,7 +136,7 @@
                                                 Phone Number <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="text" id="telephone" name="phonenum" required="required" data-validate-length="11" class="form-control col-md-7 col-xs-12">
+                                                <input type="text" id="phonenum" name="phonenum" required="required" data-validate-length="11" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="item form-group">
@@ -144,7 +144,7 @@
                                                 Division <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="text" id="division" name="cartype" required="required" data-validate-length="6" class="form-control col-md-7 col-xs-12">
+                                                <input type="text" id="cartype" name="cartype" required="required" data-validate-length="6" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="item form-group">
@@ -152,7 +152,7 @@
                                                 IMEI <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="imei" type="text" name="IMEI" data-validate-length="15" class="form-control col-md-7 col-xs-12" required="required">
+                                                <input id="IMEI" type="text" name="IMEI" data-validate-length="15" class="form-control col-md-7 col-xs-12" required="required">
                                             </div>
 
                                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
@@ -179,7 +179,7 @@
                                             <div class="ln_solid"></div>
                                             <div class="form-group">
                                                 <div class="col-md-6 col-md-offset-3">
-                                                    <button id="send" type="button" class="btn btn-success" data-target="#layerpop" data-toggle="modal">등록하기</button><br/>
+                                                    <button id="send" type="button" class="btn btn-success" data-target="#layerpop" data-toggle="modal" onclick="getElement();">등록하기</button><br/>
                                                     <div class="modal fade" id="layerpop" >
                                                         <div class="modal-dialog">
                                                           <div class="modal-content">
@@ -191,8 +191,7 @@
                                                                   등록이 완료되었습니다.
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="submit" class="btn btn-primary" onClick="location.href='index.html'">확인</button>
-                                                                
+                                                                <button type="submit" class="btn btn-primary">확인</button>
                                                             </div>
                                                           </div>
                                                         </div>

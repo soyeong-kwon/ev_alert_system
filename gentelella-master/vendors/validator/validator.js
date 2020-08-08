@@ -55,7 +55,7 @@ var validator = (function($){
         },
         hasValue : function(a){
             if( !a ){
-                alertTxt = message.empty;
+                alertTxt = message.invalid;
                 return false;
             }
             return true;
@@ -242,7 +242,7 @@ var validator = (function($){
 
         if( item.hasClass(defaults.classes.bad) ){
             if( defaults.alerts )
-                item.find('.'+defaults.classes.alert).html(text);
+                item.find('.'+defaults.classes.alert).html(text+"&nbsp;&nbsp;");
         }
 
 
