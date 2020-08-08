@@ -9,6 +9,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+
     <fragment
         android:id="@+id/googleMap"
         android:layout_width="match_parent"

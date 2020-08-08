@@ -4,8 +4,11 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET" /> <!--  인터넷 권한 선언-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,7 +25,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC4rwSyB8YdiC-hAXI81lJe-SRAcFSKPmI"/>
+            android:value="AIzaSyBbF-0_zrOLTh7_V6fJ-b84V9pdryH_7IE"/>
 
     </application>
 
