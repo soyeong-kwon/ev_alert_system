@@ -11,25 +11,27 @@ var validator = (function($){
         validateWords, lengthRange, lengthLimit, pattern, alertTxt, data,
         email_illegalChars = /[\(\)\<\>\,\;\:\\\/\"\[\]]/,
         email_filter = /^.+@.+\..{2,6}$/;  // exmaple email "steve@s-i.photo"
+       
 
     /* general text messages
     */
     message = {
-        invalid         : 'invalid input',
-        checked         : 'must be checked',
-        empty           : 'please put something here',
-        min             : 'input is too short',
-        max             : 'input is too long',
-        number_min      : 'too low',
-        number_max      : 'too high',
-        url             : 'invalid URL',
-        number          : 'not a number',
-        email           : 'email address is invalid',
-        email_repeat    : 'emails do not match',
-        password_repeat : 'passwords do not match',
-        repeat          : 'no match',
-        complete        : 'input is not complete',
-        select          : 'Please select an option'
+        invalid         : '타당하지 못한 입력값입니다.',
+        checked         : '필수 항목입니다.',
+        empty           : '필수 항목입니다.',
+        min             : '입력값이 너무 짧습니다.',
+        max             : '입력값이 너무 깁니다.',
+        number          : '숫자가 아닙니다.',
+        email           : '이메일 정보가 타당하지 않습니다.',
+        email_repeat    : '이메일이 서로 다릅니다.',
+        password_repeat : '암호가 서로 다릅니다.',
+        repeat          : '서로 다릅니다.',
+        complete        : '입력이 미완성입니다.',
+        select          : '옵션을 선택해 주세요.',
+        space           : '공백 없이 입력해주세요',
+        invalid_tel     : '올바른 휴대전화 형식이 아닙니다.',
+        number_min      : '너무 작은 숫자입니다.',
+        number_max      : '너무 큰 숫자입니다.'
     };
 
     if(!window.console){
@@ -55,7 +57,7 @@ var validator = (function($){
         },
         hasValue : function(a){
             if( !a ){
-                alertTxt = message.invalid;
+                alertTxt = message.empty;
                 return false;
             }
             return true;
@@ -65,6 +67,15 @@ var validator = (function($){
             if( b != a ){
                 // choose a specific message or a general one
                 alertTxt = message[data.type + '_repeat'] || message.no_match;
+                return false;
+            }
+            return true;
+        },
+        tel : function(a){
+            var tel_filter=/01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})/;
+            if(!tel_filter.exec(a))
+            {
+                alertTxt=message.invalid_tel;
                 return false;
             }
             return true;
@@ -81,8 +92,8 @@ var validator = (function($){
             // make sure there are at least X number of words, each at least 2 chars long.
             // for example 'john F kenedy' should be at least 2 words and will pass validation
             if( validateWords ){
-                var words = a.split(' ');
-                // iterrate on all the words
+
+              
                 var wordsLength = function(len){
                     for( var w = words.length; w--; )
                         if( words[w].length < len )
@@ -96,8 +107,17 @@ var validator = (function($){
                 }
                 return true;
             }
-            if( !skip && lengthRange && a.length < lengthRange[0] ){
+
+            
+            if( lengthRange&&lengthRange[0]&&a.length<lengthRange[0] ){
                 alertTxt = message.min;
+                return false;
+            }
+
+            var str_space=/\s/;
+            if(str_space.exec(a))
+            {
+                alertTxt=message.space;
                 return false;
             }
 
@@ -106,7 +126,7 @@ var validator = (function($){
                 alertTxt = message.max;
                 return false;
             }
-
+          
             // check if the field's value should obey any length limits, and if so, make sure the length of the value is as specified
             if( lengthLimit && lengthLimit.length ){
                 while( lengthLimit.length ){
@@ -120,6 +140,9 @@ var validator = (function($){
             if( pattern ){
                 var regex, jsRegex;
                 switch( pattern ){
+                    case 'korean':
+                        var regex = /^[가-힣]{2,4}$/;
+                        break;
                     case 'alphanumeric' :
                         regex = /^[a-zA-Z0-9]+$/i;
                         break;
@@ -127,7 +150,7 @@ var validator = (function($){
                         regex = /^[0-9]+$/i;
                         break;
                     case 'phone' :
-                        regex = /^\+?([0-9]|[-|' '])+$/i;
+                        var regex = /^01([0|1|6|7|8|9]?)-?([0-9]{4})-?([0-9]{4})$/;
                         break;
                     default :
                         regex = pattern;
@@ -161,14 +184,14 @@ var validator = (function($){
                 alertTxt = message.max;
                 return false;
             }
-            else if( minmax[0] && (a|0) < minmax[0] ){
-                alertTxt = message.number_min;
-                return false;
-            }
-            else if( minmax[1] && (a|0) > minmax[1] ){
-                alertTxt = message.number_max;
-                return false;
-            }
+            // else if( lengthRange&&lengthRange[0]&&a.length<lengthRange[0] ){
+            //     alertTxt = message.number_min;
+            //     return false;
+            // }
+            // else if( minmax[1] && (a|0) > minmax[1] ){
+            //     alertTxt = message.number_max;
+            //     return false;
+            // }
             return true;
         },
         // Date is validated in European format (day,month,year)
@@ -242,7 +265,7 @@ var validator = (function($){
 
         if( item.hasClass(defaults.classes.bad) ){
             if( defaults.alerts )
-                item.find('.'+defaults.classes.alert).html(text+"&nbsp;&nbsp;");
+                item.find('.'+defaults.classes.alert).html(text);
         }
 
 

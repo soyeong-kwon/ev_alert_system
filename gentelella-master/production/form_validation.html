@@ -128,7 +128,7 @@
                                                 Name <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="text" id="name" name="name" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" placeholder="본인의 이름을 기입해주세요." required="required">
+                                                <input type="text" id="name" name="name" class="form-control col-md-7 col-xs-12" data-validate-length-range="2,6" placeholder="본인의 이름을 기입해주세요." required="required">
                                             </div>
                                         </div>
                                         <div class="item form-group">
@@ -136,7 +136,7 @@
                                                 Phone Number <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="text" id="phonenum" name="phonenum" required="required" data-validate-length="11" class="form-control col-md-7 col-xs-12">
+                                                <input type="tel" id="phonenum" name="phonenum" required="required" data-validate-length="11" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="item form-group">
@@ -144,7 +144,7 @@
                                                 Division <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="text" id="cartype" name="cartype" required="required" data-validate-length="6" class="form-control col-md-7 col-xs-12">
+                                                <input type="text" id="cartype" name="cartype" required="required" data-validate-length="12" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="item form-group">
@@ -152,7 +152,7 @@
                                                 IMEI <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="IMEI" type="text" name="IMEI" data-validate-length="14" class="form-control col-md-7 col-xs-12" required="required">
+                                                <input id="IMEI" type="number" name="IMEI" data-validate-length-range="15,15" class="form-control col-md-7 col-xs-12" required="required">
                                             </div>
 
                                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
