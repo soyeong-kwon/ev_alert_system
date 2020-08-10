@@ -1,6 +1,7 @@
 package com.example.googlemapexample;
 
 import android.Manifest;
+import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -62,6 +63,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
     private GoogleMap mMap;
     private Marker currentMarker = null;
+    private static String lat, lng;
 
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -175,10 +177,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
                 String markerTitle = "**Current Location**";
-                String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude()); // ******************** 현재 위치 정보 ***********************
+                String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude());
 
+
+                /* 현재 위치정보 DB저장 */
                 String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                 String Longitude = String.valueOf(location.getLongitude());
+                String IMEI = "000001111122222";
+
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
                     @Override
@@ -187,10 +193,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             JSONObject jsonObject = new JSONObject(response);
                             boolean success = jsonObject.getBoolean("success");
                             if(success){
-                                // Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "긴급 자동차", Toast.LENGTH_SHORT).show();
                             }
                             else{
-                                // Toast.makeText(getApplicationContext(), "실패",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -199,13 +205,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 };
 
+
+
                 // 서버로 Volley를 이용해서 요청
-                AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, responseListener);
+                AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, IMEI, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
                 queue.add(addressRequest);
 
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
+
 
                 //현재 위치에 마커 생성하고 이동
                 setCurrentLocation(location, markerTitle, markerSnippet);
@@ -213,77 +222,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     };
-
-    /*
-    private List<LatLng> latlngList;
-
-    class BackGroundTask extends AsyncTask<Void, Void, String>
-    {
-
-        String target;
-
-        @Override
-        protected void onPreExecute(){
-            target="http://3.34.4.41/address.php";
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-
-            try{
-                URL url = new URL(target);
-                HttpURLConnection httpURLConnection= (HttpURLConnection) url.openConnection();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String temp;
-                StringBuilder stringBuilder = new StringBuilder();
-                while((temp=bufferedReader.readLine()!=null))
-                {
-                    stringBuilder.append(temp+"\n");
-                }
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
-                return stringBuilder.toString().trim();
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        public void onProgressUpdate(Void... values){
-            super.onProgressUpdate();
-        }
-
-        @Override
-        public void onPostExecute(String result){
-            try{
-                JSONObject jsonObject = new JSONObject(result);
-                JSONArray jsonArray = jsonObject.getJSONArray("response");
-                int count=0;
-                String Latitude, Longitude;
-                while(count<jsonArray.length())
-                {
-                    JSONObject object = jsonArray.getJSONObject(count);
-                    Latitude = object.getString("Latitude");
-                    Longitude = object.getString("Longitude");
-
-
-                }
-            } catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    재민 테스트
-     */
-
-
-
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
     {
@@ -374,7 +312,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
         if (currentMarker != null) currentMarker.remove();
-
 
         LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude()); // maker 위치 ( 0.001 = 약 100m )
 
