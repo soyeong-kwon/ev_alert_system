@@ -128,7 +128,7 @@
                                                 Name <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="text" id="name" name="name" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" placeholder="본인의 이름을 기입해주세요." required="required">
+                                                <input type="text" id="name" name="name" class="form-control col-md-7 col-xs-12" data-validate-length-range="2,6" placeholder="본인의 이름을 기입해주세요." required="required">
                                             </div>
                                         </div>
                                         <div class="item form-group">
@@ -136,7 +136,7 @@
                                                 Phone Number <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="text" id="phonenum" name="phonenum" required="required" data-validate-length="11" class="form-control col-md-7 col-xs-12">
+                                                <input type="tel" id="phonenum" name="phonenum" required="required" data-validate-length="11" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="item form-group">
@@ -144,7 +144,7 @@
                                                 Division <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="text" id="cartype" name="cartype" required="required" data-validate-length="6" class="form-control col-md-7 col-xs-12">
+                                                <input type="text" id="cartype" name="cartype" required="required" data-validate-length="12" class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
                                         <div class="item form-group">
@@ -152,7 +152,7 @@
                                                 IMEI <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="IMEI" type="text" name="IMEI" data-validate-length="15" class="form-control col-md-7 col-xs-12" required="required">
+                                                <input id="IMEI" type="number" name="IMEI" data-validate-length-range="15,15" class="form-control col-md-7 col-xs-12" required="required">
                                             </div>
 
                                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
@@ -175,29 +175,12 @@
                                                   </div>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div class="ln_solid"></div>
-                                            <div class="form-group">
-                                                <div class="col-md-6 col-md-offset-3">
-                                                    <button id="send" type="button" class="btn btn-success" data-target="#layerpop" data-toggle="modal" onclick="getElement();">등록하기</button><br/>
-                                                    <div class="modal fade" id="layerpop" >
-                                                        <div class="modal-dialog">
-                                                          <div class="modal-content">
-                                                            <div class="modal-header">
-                                                              <button type="button" class="close" data-dismiss="modal">×</button>
-                                                              <h4 class="modal-title">등록 완료!</h4>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                  등록이 완료되었습니다.
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="submit" class="btn btn-primary">확인</button>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                      </div>
-                                                      
-                                                </div>
+                                        <div class="ln_solid"></div>
+                                        <div class="form-group">
+                                            <div class="col-md-6 col-md-offset-3">
+                                                <button id="send" type="submit" class="btn btn-success" data-target="#layerpop" data-toggle="modal" onclick="getElement();">등록하기</button><br/>
                                             </div>
                                         </div>
                                     </form>
@@ -219,15 +202,15 @@
         </div>
     </div>
     <!-- jQuery -->
-    <script src="../vendors/jquery/dist/jquery.min.js"></script>
+    <script src="vendors/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap -->
-    <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- FastClick -->
-    <script src="../vendors/fastclick/lib/fastclick.js"></script>
+    <script src="vendors/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
-    <script src="../vendors/nprogress/nprogress.js"></script>
+    <script src="vendors/nprogress/nprogress.js"></script>
     <!-- validator -->
-    <script src="../vendors/validator/validator.js"></script>
+    <script src="validator.js"></script>
 
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
