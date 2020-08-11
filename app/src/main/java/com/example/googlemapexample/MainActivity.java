@@ -63,7 +63,6 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
     private GoogleMap mMap;
     private Marker currentMarker = null;
-    private static String lat, lng;
 
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -192,8 +191,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             boolean success = jsonObject.getBoolean("success");
+                            String lat = jsonObject.getString("Latitude");
+                            String lng = jsonObject.getString("Longitude");
+                            setCurrentLocation(lat, lng);
                             if(success){
-                                Toast.makeText(getApplicationContext(), "긴급 자동차", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
                             }
                             else{
                                 Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
@@ -215,9 +217,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
 
-
                 //현재 위치에 마커 생성하고 이동
-                setCurrentLocation(location, markerTitle, markerSnippet);
                 mCurrentLocatiion = location;
             }
         }
@@ -310,15 +310,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
+    public void setCurrentLocation(String lat, String lng) {
         if (currentMarker != null) currentMarker.remove();
 
-        LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude()); // maker 위치 ( 0.001 = 약 100m )
+        double latitude = Double.parseDouble(lat);
+        double longitude = Double.parseDouble(lng);
+
+        LatLng currentLatLng = new LatLng(latitude, longitude); // maker 위치 ( 0.001 = 약 100m )
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(currentLatLng);
-        markerOptions.title(markerTitle);
-        markerOptions.snippet(markerSnippet);
+        //markerOptions.title(markerTitle);
+        //markerOptions.snippet(markerSnippet);
         markerOptions.draggable(true);
 
         BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
