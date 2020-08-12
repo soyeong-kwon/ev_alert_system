@@ -191,9 +191,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             boolean success = jsonObject.getBoolean("success");
-                            String lat = jsonObject.getString("Latitude");
-                            String lng = jsonObject.getString("Longitude");
-                            setCurrentLocation(lat, lng);
+
+                            int number = jsonObject.getInt("number");
+                            Log.d(TAG,"number : " + number);
+                            while(number>0) {
+                                String lat = jsonObject.getString("Latitude"+number);
+                                String lng = jsonObject.getString("Longitude"+number);
+                                Log.d(TAG, "Latitude : "+lat);
+                                Log.d(TAG, "Longitude : "+lng);
+                                setCurrentLocation(lat, lng); //현재 위치에 마커 생성
+                                number--;
+                            }
                             if(success){
                                 Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
                             }
@@ -217,7 +225,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
 
-                //현재 위치에 마커 생성하고 이동
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition); //*****************************************************************************************
+                mMap.moveCamera(cameraUpdate);
                 mCurrentLocatiion = location;
             }
         }
@@ -239,9 +248,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             Log.d(TAG, "startLocationUpdates : call mFusedLocationClient.requestLocationUpdates");
             mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
-
-
-
 
 
             if (checkPermission())
@@ -330,9 +336,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
 
         currentMarker = mMap.addMarker(markerOptions);
-
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentLatLng); //*****************************************************************************************
-        mMap.moveCamera(cameraUpdate);
     }
 
     public void setDefaultLocation()
