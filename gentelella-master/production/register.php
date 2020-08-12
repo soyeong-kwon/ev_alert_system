@@ -6,10 +6,10 @@ mysqli_query($conn,'SET NAMES utf8');
     $name = $_POST['name'];
     $phonenum = $_POST['phonenum'];
     $cartype = $_POST['cartype'];
-    $IMEI = $_POST['IMEI'];
-    $sql= "insert into personinfo(name, phonenum, cartype, IMEI) values('$name','$phonenum','$cartype','$IMEI')";
+
+    $sql= "insert into personinfo(name, phonenum, cartype) values('$name','$phonenum','$cartype')";
     $res= $conn->query($sql);
     
-    echo "<script> location.href='form_validation.html'; </script>"
+    echo "<script> location.href='register.html'; </script>"
 
 ?>
