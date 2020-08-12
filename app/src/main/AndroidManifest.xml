@@ -5,7 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET" /> <!--  인터넷 권한 선언-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/> <!--단말기 전화번호 권한 선언-->
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/>
 
     <application
         android:usesCleartextTraffic="true"
@@ -25,7 +26,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBbF-0_zrOLTh7_V6fJ-b84V9pdryH_7IE"/>
+            android:value="AIzaSyDyWMVo1Xe1l3_bgXIhIe4pZ3w81BvmVdw"/>
 
     </application>
 

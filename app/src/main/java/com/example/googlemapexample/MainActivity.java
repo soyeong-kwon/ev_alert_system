@@ -1,6 +1,7 @@
 package com.example.googlemapexample;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,9 +13,12 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.Settings;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -77,7 +81,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // 앱을 실행하기 위해 필요한 퍼미션을 정의합니다.
     String[] REQUIRED_PERMISSIONS = {
-            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.READ_PHONE_STATE,Manifest.permission.READ_PHONE_NUMBERS
     };  // 외부 저장소
 
     Location mCurrentLocatiion;
@@ -86,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
 
+    private View mLayout2;
     private View mLayout;
     // Snackbar 사용하기 위해서는 View가 필요합니다.
     // (참고로 Toast에서는 Context가 필요했습니다.)
@@ -100,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
 
         mLayout = findViewById(R.id.layout_main);
-
+        mLayout2=findViewById(R.id.layout_main);
         locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL_MS)
@@ -182,7 +188,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 /* 현재 위치정보 DB저장 */
                 String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                 String Longitude = String.valueOf(location.getLongitude());
-                String IMEI = "000001111122222";
+                String PhoneNum = getPhoneNumber();
+                Log.d(TAG, "IMEI : "+PhoneNum);
 
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
@@ -190,15 +197,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onResponse(String response) {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            boolean success = jsonObject.getBoolean("success");
+                            boolean emergency = jsonObject.getBoolean("emergency");
                             String lat = jsonObject.getString("Latitude");
                             String lng = jsonObject.getString("Longitude");
                             setCurrentLocation(lat, lng);
-                            if(success){
-                                Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
+                            if (emergency) {
+                                Toast.makeText(getApplicationContext(), "긴급 자동차", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "일반 자동차", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -208,9 +214,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 };
 
 
-
                 // 서버로 Volley를 이용해서 요청
-                AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, IMEI, responseListener);
+                AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
                 queue.add(addressRequest);
 
@@ -222,6 +227,56 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     };
+
+    @SuppressLint({"MissionPermission", "HardwareIds"})
+    public String getPhoneNumber() {
+
+        TelephonyManager telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        String PhoneNumber = "";
+        String PhoneNumber_Temp = "";
+        int chkper_phonestate = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+        int chkper_phonenum = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS);
+
+        if (chkper_phonenum == PackageManager.PERMISSION_GRANTED && chkper_phonestate == PackageManager.PERMISSION_GRANTED) {
+            try {
+                if (telephony.getLine1Number() != null) {
+                    PhoneNumber_Temp = telephony.getLine1Number();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (PhoneNumber_Temp.startsWith("+82")) {
+                PhoneNumber_Temp = PhoneNumber_Temp.replace("+82", "0");
+                PhoneNumber = PhoneNumberUtils.formatNumber(PhoneNumber_Temp);
+
+
+            }
+            return PhoneNumber;
+
+
+        } else {
+        //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
+        // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
+            // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
+            Snackbar.make(mLayout2, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
+                    ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                }
+            }).show();
+            return "퍼미션을 요청합니다.";
+        } else {
+            // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
+            // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+            return "퍼미션 허용을 부탁해요";
+        }
+
+    }
+
+};
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
     {
@@ -239,9 +294,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             Log.d(TAG, "startLocationUpdates : call mFusedLocationClient.requestLocationUpdates");
             mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
-
-
-
 
 
             if (checkPermission())
@@ -302,6 +354,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return address.getAddressLine(0).toString();
         }
     }
+
+
 
     public boolean checkLocationServicesStatus() {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
