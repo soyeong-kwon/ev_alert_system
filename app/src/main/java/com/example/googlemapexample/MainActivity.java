@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                 String Longitude = String.valueOf(location.getLongitude());
                 String PhoneNum = getPhoneNumber();
-                Log.d(TAG, "IMEI : "+PhoneNum);
+                Log.d(TAG, "PhoneNum : "+PhoneNum);
 
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
@@ -198,13 +198,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             boolean emergency = jsonObject.getBoolean("emergency");
-                            String lat = jsonObject.getString("Latitude");
-                            String lng = jsonObject.getString("Longitude");
-                            setCurrentLocation(lat, lng);
-                            if (emergency) {
-                                Toast.makeText(getApplicationContext(), "긴급 자동차", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getApplicationContext(), "일반 자동차", Toast.LENGTH_SHORT).show();
+
+                            int number = jsonObject.getInt("number");
+                            Log.d(TAG,"number : " + number);
+                            String[] lat = new String[number+2];
+                            String[] lng = new String[number+2];
+                            Log.d(TAG, "String success !!");
+
+                            while(number>=0) {
+                                lat[number] = jsonObject.getString("Latitude"+number);
+                                lng[number] = jsonObject.getString("Longitude"+number);
+                                Log.d(TAG, "Latitude : "+lat[number]);
+                                Log.d(TAG, "Longitude : "+lng[number]);
+                                number--;
+                            }
+
+                            setCurrentLocation(lat, lng); //현재 위치에 마커 생성
+
+                            if(emergency){
+                                Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -222,11 +237,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
 
-                //현재 위치에 마커 생성하고 이동
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition); //*****************************************************************************************
+                mMap.moveCamera(cameraUpdate);
                 mCurrentLocatiion = location;
             }
         }
     };
+
+
 
     @SuppressLint({"MissionPermission", "HardwareIds"})
     public String getPhoneNumber() {
@@ -277,6 +295,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 };
+
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
     {
@@ -364,29 +383,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    public void setCurrentLocation(String lat, String lng) {
+    public void setCurrentLocation(String[] lat, String[] lng) {
         if (currentMarker != null) currentMarker.remove();
 
-        double latitude = Double.parseDouble(lat);
-        double longitude = Double.parseDouble(lng);
+        int i=0;
 
-        LatLng currentLatLng = new LatLng(latitude, longitude); // maker 위치 ( 0.001 = 약 100m )
+        while(lat[i]!=null)
+        {
+            double latitude = Double.parseDouble(lat[i]);
+            double longitude = Double.parseDouble(lng[i]);
 
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(currentLatLng);
-        //markerOptions.title(markerTitle);
-        //markerOptions.snippet(markerSnippet);
-        markerOptions.draggable(true);
+            LatLng currentLatLng = new LatLng(latitude, longitude); // maker 위치 ( 0.001 = 약 100m )
+            Log.d(TAG, "currentLatLng : "+latitude + ", "+longitude);
 
-        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
-        Bitmap b=bitmapdraw.getBitmap();
-        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 50, false); // maker 크기
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(currentLatLng);
+            //markerOptions.title(markerTitle);
+            //markerOptions.snippet(markerSnippet);
+            markerOptions.draggable(true);
 
-        currentMarker = mMap.addMarker(markerOptions);
+            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
+            Bitmap b=bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 50, false); // maker 크기
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
 
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentLatLng); //*****************************************************************************************
-        mMap.moveCamera(cameraUpdate);
+            currentMarker = mMap.addMarker(markerOptions);
+            i++;
+        }
+
+
     }
 
     public void setDefaultLocation()
