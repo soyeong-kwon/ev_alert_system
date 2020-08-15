@@ -84,19 +84,6 @@
                         <div class="nav toggle">
                             <a id="menu_toggle"><i class="fa fa-bars"></i></a>
                         </div>
-
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                    관리자
-                                    <span class=" fa fa-angle-down"></span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log In</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-
                     </nav>
                 </div>
             </div>
@@ -139,7 +126,7 @@
                                         <tr>
                                             <th>#</th>
                                             <th>이름</th>
-                                            <th>긴급자동차 등록번호 (IMEI 코드)</th>
+                                            <th>단말기 전화번호</th>
                                             <th>구분</th>
                                             <th>관리</th>
                                         </tr>
@@ -153,7 +140,7 @@
                                             <input type="hidden" name="id" value="<?php echo $row['id']?>">
                                             <th scope="row"> <?php echo $row['id']; ?></th>
                                             <td><?php echo $row['name']; ?></td>
-                                            <td><?php echo $row['IMEI']; ?></td>
+                                            <td><?php echo $row['phonenum']; ?></td>
                                             <td><?php echo $row['cartype']; ?></td>
                                             <td><button type="submit"> 삭제 </button></td>                                    
                                         </tr>

@@ -16,7 +16,7 @@ var validator = (function($){
     /* general text messages
     */
     message = {
-        invalid         : '타당하지 못한 입력값입니다.',
+        invalid         : '입력 포맷이 적절하지 않습니다.',
         checked         : '필수 항목입니다.',
         empty           : '필수 항목입니다.',
         min             : '입력값이 너무 짧습니다.',
