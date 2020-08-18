@@ -1126,6 +1126,7 @@ h2 {
 }
 
 .x_panel, .x_title {
+    width:50%;
     margin-bottom: 10px;
 }
 
@@ -4767,3 +4768,7 @@ ul.notifications {
         font-size: 12px;
         color: antiquewhite
     }
+.table.address_table{
+
+     width:90%; margin:22px; text-align:right
+}
