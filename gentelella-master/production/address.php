@@ -21,6 +21,7 @@ $response["emergency"]=false;
 
 $res= $conn->query($sql);
 $res1= $conn->query($sql1);
+
 // DB에 phonenum가 있고, 이미 insert 된 phonenum이 없을 때, 위치정보 DB에 저장
 if(mysqli_fetch_array($res1)!=NULL){
     if(mysqli_fetch_array($res)==NULL){
