@@ -66,7 +66,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
     private GoogleMap mMap;
-    private Marker currentMarker = null;
+    private Marker[] currentMarker = new Marker[100];
 
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 /* 현재 위치정보 DB저장 */
                 String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                 String Longitude = String.valueOf(location.getLongitude());
-                String PhoneNum = getPhoneNumber();
+                String PhoneNum = "010-9271-3205"; //getPhoneNumber();
                 Log.d(TAG, "PhoneNum : "+PhoneNum);
 
 
@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     };
 
-
+/*
 
     @SuppressLint({"MissionPermission", "HardwareIds"})
     public String getPhoneNumber() {
@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 };
-
+*/
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
     {
@@ -384,12 +384,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void setCurrentLocation(String[] lat, String[] lng) {
-        if (currentMarker != null) currentMarker.remove();
 
         int i=0;
 
         while(lat[i]!=null)
         {
+            if (currentMarker[i] != null) currentMarker[i].remove();
+
             double latitude = Double.parseDouble(lat[i]);
             double longitude = Double.parseDouble(lng[i]);
 
@@ -401,13 +402,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //markerOptions.title(markerTitle);
             //markerOptions.snippet(markerSnippet);
             markerOptions.draggable(true);
-
             BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
             Bitmap b=bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 50, false); // maker 크기
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70,
+50, false); // maker 크기
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
 
-            currentMarker = mMap.addMarker(markerOptions);
+            currentMarker[i] = mMap.addMarker(markerOptions);
             i++;
         }
 
@@ -421,7 +422,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         String markerTitle = "위치정보 가져올 수 없음";
         String markerSnippet = "위치 퍼미션과 GPS 활성 요부 확인하세요";
 
-        if (currentMarker != null) currentMarker.remove();
+        int i=0;
+
+        if (currentMarker[i] != null) currentMarker[i].remove();
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(DEFAULT_LOCATION);
@@ -429,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         markerOptions.snippet(markerSnippet);
         markerOptions.draggable(true);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        currentMarker = mMap.addMarker(markerOptions);
+        currentMarker[i] = mMap.addMarker(markerOptions);
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 15);
         mMap.moveCamera(cameraUpdate);
