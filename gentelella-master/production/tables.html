@@ -118,9 +118,10 @@
                                     $dbName = 'DajungDB';
                                     $conn = new mysqli($host, $user, $pw, $dbName);
                                     $sql = "select *from personinfo";
+                                   
                                     $res = $conn->query($sql);
                                     ?>
-                                    <form method="POST" action="delete.php">
+                                    
                                 <table class="table table-bordered">
                                     <thead>                                        
                                         <tr>
@@ -132,22 +133,25 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+                                    
                                     <?php
-                                        while ($row=mysqli_fetch_array($res))
+                                        while ($row=mysqli_fetch_assoc($res))
                                         {?>
                                         <tr>
-                                            <input type="hidden" name="phonenum" value="<?php echo $row['phonenum']?>">
+                                        <form method="POST" action="delete.php">
                                             <th scope="row"> <?php echo $row['id']; ?></th>
                                             <td><?php echo $row['name']; ?></td>
                                             <td><?php echo $row['phonenum']; ?></td>
                                             <td><?php echo $row['cartype']; ?></td>
-                                            <td><button type="submit"> 삭제 </button></td>                                    
+                                            
+                                            <input type="hidden" name="phonenum" value="<?= $row['phonenum']?>">
+                                            <td><input type="submit" value="삭제" /></td>    
+                                            </form>                                
                                         </tr>
                                     <?php } ?>
                                     </tbody>
                                 </table>
-                                        </form>
+                                        
 
                             </div>
                         </div>

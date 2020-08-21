@@ -8,8 +8,15 @@ mysqli_query($conn,'SET NAMES utf8');
     $cartype = $_POST['cartype'];
 
     $sql= "insert into personinfo(name, phonenum, cartype) values('$name','$phonenum','$cartype')";
-    $res= $conn->query($sql);
+    $sql2="alter table personinfo auto_increment=1";
+    $sql3="set @count=0";
+    $sql4="update personinfo set id=@count:=@count+1";
     
+    $res= $conn->query($sql);
+    $res=$conn->query($sql2);
+    $res=$conn->query($sql3);
+    $res=$conn->query($sql4);
+
     echo "<script> location.href='register.html'; </script>"
 
 ?>
