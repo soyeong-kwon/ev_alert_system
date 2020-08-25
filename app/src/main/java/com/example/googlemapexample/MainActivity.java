@@ -21,6 +21,7 @@ import android.provider.Settings;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // onRequestPermissionsResult에서 수신된 결과에서 ActivityCompat.requestPermissions를 사용한 퍼미션 요청을 구별하기 위해 사용됩니다.
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     boolean needRequest = false;
+
+    private int wait = 0;
 
 
     // 앱을 실행하기 위해 필요한 퍼미션을 정의합니다.
@@ -121,6 +125,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
+
+
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         Log.d(TAG, "onMapReady :");
@@ -160,11 +166,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
+        mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
             @Override
-            public void onMapClick(LatLng latLng) {
-                Log.d(TAG, "onMapClick :");
+            public void onCameraMove() {
+                wait=1;
+                Log.d(TAG, "wait1 = "+wait);
             }
         });
     }
@@ -237,8 +243,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
 
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition); //*****************************************************************************************
-                mMap.moveCamera(cameraUpdate);
+
+                if(wait!=1) {
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition);
+                    mMap.moveCamera(cameraUpdate);
+                }
+                wait=0;
+
                 mCurrentLocatiion = location;
             }
         }
@@ -404,8 +415,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             markerOptions.draggable(true);
             BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
             Bitmap b=bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70,
-50, false); // maker 크기
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70,50, false); // maker 크기
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
 
             currentMarker[i] = mMap.addMarker(markerOptions);
