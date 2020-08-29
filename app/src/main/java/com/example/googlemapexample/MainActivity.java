@@ -8,12 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
@@ -24,7 +26,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -75,15 +79,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //gps가 켜져 있는 동안에 실시간으로 바뀌는 위치정보를 얻기 위함
     private static final int UPDATE_INTERVAL_MS = 5000;//10초
     private static final int FASTEST_UPDATE_INTERVAL_MS = 10000; // 20초
-
     // onRequestPermissionsResult에서 수신된 결과에서 ActivityCompat.requestPermissions를 사용한 퍼미션 요청을 구별하기 위해 사용됩니다.
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     boolean needRequest = false;
-
     private int wait = 0;
-
-
     // 앱을 실행하기 위해 필요한 퍼미션을 정의합니다.
+    private int emergency=1; //1일때 긴급자동차
+
     String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.READ_PHONE_STATE,Manifest.permission.READ_PHONE_NUMBERS
@@ -123,10 +125,57 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.googleMap);
         mapFragment.getMapAsync(this);
+
+        final ToggleButton tb=(ToggleButton)this.findViewById(R.id.togglebutton);
+        tb.setText("긴급자동차");
+        tb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean on) {
+                String PhoneNum = getPhoneNumber();
+
+                Response.Listener<String> responseListener_toggle= new Response.Listener<String>() { // php 접속 응답 확인
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject_toggle = new JSONObject(response);
+                            boolean inaddress = jsonObject_toggle.getBoolean("inaddress");
+                            int num_inaddress = jsonObject_toggle.getInt("num_inaddress");
+                            Log.d(TAG,"상태 :" + num_inaddress);
+                            String[] lat= new String[num_inaddress+2];
+                            String[] lng= new String[num_inaddress+2];
+
+                            while(num_inaddress>=0){
+                                lat[num_inaddress]=jsonObject_toggle.getString("Latitude"+num_inaddress);
+                                lng[num_inaddress]=jsonObject_toggle.getString("Longitude"+num_inaddress);
+                                num_inaddress--;
+                            }
+                            setCurrentLocation(lat,lng);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                };
+                if(on){
+                    tb.setText("일반자동차");
+                    Toast.makeText(getApplicationContext(),"일반자동차",Toast.LENGTH_LONG).show();
+                    Log.d(TAG,"상태 :"+ 1);
+                    // 서버로 Volley를 이용해서 요청
+                    TurnToNormal turntoNormal = new TurnToNormal(PhoneNum, responseListener_toggle);
+                    Log.d(TAG,"상태 :(전화번호)"+PhoneNum);
+                    RequestQueue Rqueue = Volley.newRequestQueue(MainActivity.this);
+                    Rqueue.add(turntoNormal);
+                    emergency=0;
+                }
+                else{
+                    tb.setText("긴급자동차");
+                    Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
+                    Log.d(TAG,"상태 :"+ 0);
+                    emergency=1;
+                }
+            }
+        });
     }
-
-
-
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         Log.d(TAG, "onMapReady :");
@@ -182,80 +231,85 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             List<Location> locationList = locationResult.getLocations();
 
             if (locationList.size() > 0) {
-                Location location = locationList.get(locationList.size() - 1);
-                //location = locationList.get(0);
+                if(emergency==1){
+                    Log.d(TAG, "나는 긴급자동차");
+                    Location location = locationList.get(locationList.size() - 1);
+                    //location = locationList.get(0);
 
-                currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+                    currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
-                String markerTitle = "**Current Location**";
-                String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude());
-
-
-                /* 현재 위치정보 DB저장 */
-                String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
-                String Longitude = String.valueOf(location.getLongitude());
-                String PhoneNum = "010-9271-3205"; //getPhoneNumber();
-                Log.d(TAG, "PhoneNum : "+PhoneNum);
+                    String markerTitle = "**Current Location**";
+                    String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude());
 
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean emergency = jsonObject.getBoolean("emergency");
+                    /* 현재 위치정보 DB저장 */
+                    String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
+                    String Longitude = String.valueOf(location.getLongitude());
+                    String PhoneNum = getPhoneNumber();
+                    Log.d(TAG, "PhoneNum : "+PhoneNum);
 
-                            int number = jsonObject.getInt("number");
-                            Log.d(TAG,"number : " + number);
-                            String[] lat = new String[number+2];
-                            String[] lng = new String[number+2];
-                            Log.d(TAG, "String success !!");
 
-                            while(number>=0) {
-                                lat[number] = jsonObject.getString("Latitude"+number);
-                                lng[number] = jsonObject.getString("Longitude"+number);
-                                Log.d(TAG, "Latitude : "+lat[number]);
-                                Log.d(TAG, "Longitude : "+lng[number]);
-                                number--;
+                    Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                boolean emergency = jsonObject.getBoolean("emergency");
+
+                                int number = jsonObject.getInt("number");
+                                Log.d(TAG,"number : " + number);
+                                String[] lat = new String[number+2];
+                                String[] lng = new String[number+2];
+                                Log.d(TAG, "String success !!");
+
+                                while(number>=0) {
+                                    lat[number] = jsonObject.getString("Latitude"+number);
+                                    lng[number] = jsonObject.getString("Longitude"+number);
+                                    Log.d(TAG, "Latitude : "+lat[number]);
+                                    Log.d(TAG, "Longitude : "+lng[number]);
+                                    number--;
+                                }
+
+                                setCurrentLocation(lat, lng); //현재 위치에 마커 생성
+
+//                            if(emergency){
+//                                Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
+//                            }
+//                            else{
+//                                Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
+//                            }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
 
-                            setCurrentLocation(lat, lng); //현재 위치에 마커 생성
-
-                            if(emergency){
-                                Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                    };
+                    // 서버로 Volley를 이용해서 요청
+                    AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, responseListener);
+                    RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                    queue.add(addressRequest);
 
+
+                    Log.d(TAG, "onLocationResult : " + markerSnippet);
+
+
+                    if(wait!=1) {
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition);
+                        mMap.moveCamera(cameraUpdate);
                     }
-                };
+                    wait=0;
 
 
-                // 서버로 Volley를 이용해서 요청
-                AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                queue.add(addressRequest);
 
-
-                Log.d(TAG, "onLocationResult : " + markerSnippet);
-
-
-                if(wait!=1) {
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition);
-                    mMap.moveCamera(cameraUpdate);
+                    mCurrentLocatiion = location;
                 }
-                wait=0;
-
-                mCurrentLocatiion = location;
             }
         }
+
+
     };
 
-/*
+
 
     @SuppressLint({"MissionPermission", "HardwareIds"})
     public String getPhoneNumber() {
@@ -306,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 };
-*/
+
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
     {
@@ -560,4 +614,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
         }
     }
+
+
 }
