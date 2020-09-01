@@ -6,20 +6,27 @@ mysqli_query($conn,'SET NAMES utf8');
 $name=$_POST['name'];
 $phonenum=$_POST['phonenum'];
 
-$personinfo_name="select from personinfo where name='$name'";
-$personinfo_phone="select from personinfo where phonenum='$phonenum'";
-$delete_personinfo="delete from personinfo where name='$name";
-$delete_address="delete from address where phonenum='$phonenum";
+$personinfo_check="select * from personinfo where name='$name' and phonenum='$phonenum'";
+$delete_check="delete from personinfo where name='$name' and phonenum='$phonenum'";
+$sql2="alter table personinfo auto_increment=1";
+$sql3="set @count=0";
+$sql4="update personinfo set id=@count:=@count+1";
 
-$res_1=$conn->query($personinfo_name);
-$res_2=$conn->query($personinfo_phone);
+$res_1=$conn->query($personinfo_check);
 
-if($res_1==$res_2)
+if(mysqli_fetch_array($res_1)!=NULL)
 {
-    $res_del1=$conn->query($delete_address);
-    $res_del1=$conn->query($delete_personinfo;
-        
+    $res_del1=$conn->query($delete_check);  
+    $res=$conn->query($sql2);
+    $res=$conn->query($sql3);
+    $res=$conn->query($sql4);
+   
+    echo "<script>location.href = 'index.html';</script>";
+}
+else{
+    echo "<script>location.href = 'delete.html';</script>";
 }
 
-echo "<script>location.href='tables.html'; </script>"
+
+
 ?>
