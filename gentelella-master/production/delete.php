@@ -21,12 +21,12 @@ if(mysqli_fetch_array($res_1)!=NULL)
     $res=$conn->query($sql3);
     $res=$conn->query($sql4);
    
-    echo "<script>location.href = 'index.html';</script>";
-}
-else{
     echo "<script>location.href = 'delete.html';</script>";
 }
 
-
+else{
+    echo "<script>alert('등록된 정보가 없습니다.');</script>";
+    echo "<script>location.href = 'delete.html';</script>";
+}
 
 ?>
