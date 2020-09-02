@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean needRequest = false;
     private int wait = 0;
     // 앱을 실행하기 위해 필요한 퍼미션을 정의합니다.
-    private int emergency=1; //1일때 긴급자동차
+    private int emg_button=1; //1일때 긴급자동차
 
     String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -127,51 +127,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         final ToggleButton tb=(ToggleButton)this.findViewById(R.id.togglebutton);
-        tb.setText("긴급자동차");
+        tb.setText("ON");
         tb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean on) {
-                String PhoneNum = getPhoneNumber();
-
-                Response.Listener<String> responseListener_toggle= new Response.Listener<String>() { // php 접속 응답 확인
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject_toggle = new JSONObject(response);
-                            boolean inaddress = jsonObject_toggle.getBoolean("inaddress");
-                            int num_inaddress = jsonObject_toggle.getInt("num_inaddress");
-                            Log.d(TAG,"상태 :" + num_inaddress);
-                            String[] lat= new String[num_inaddress+2];
-                            String[] lng= new String[num_inaddress+2];
-
-                            while(num_inaddress>=0){
-                                lat[num_inaddress]=jsonObject_toggle.getString("Latitude"+num_inaddress);
-                                lng[num_inaddress]=jsonObject_toggle.getString("Longitude"+num_inaddress);
-                                num_inaddress--;
-                            }
-                            setCurrentLocation(lat,lng);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                };
                 if(on){
-                    tb.setText("일반자동차");
-                    Toast.makeText(getApplicationContext(),"일반자동차",Toast.LENGTH_LONG).show();
-                    Log.d(TAG,"상태 :"+ 1);
-                    // 서버로 Volley를 이용해서 요청
-                    TurnToNormal turntoNormal = new TurnToNormal(PhoneNum, responseListener_toggle);
-                    Log.d(TAG,"상태 :(전화번호)"+PhoneNum);
-                    RequestQueue Rqueue = Volley.newRequestQueue(MainActivity.this);
-                    Rqueue.add(turntoNormal);
-                    emergency=0;
+                    tb.setText("OFF");
+                    emg_button=0;
                 }
                 else{
-                    tb.setText("긴급자동차");
-                    Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
-                    Log.d(TAG,"상태 :"+ 0);
-                    emergency=1;
+                    tb.setText("ON");
+                    emg_button=1;
                 }
             }
         });
@@ -231,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             List<Location> locationList = locationResult.getLocations();
 
             if (locationList.size() > 0) {
-                if(emergency==1){
+
                     Log.d(TAG, "나는 긴급자동차");
                     Location location = locationList.get(locationList.size() - 1);
                     //location = locationList.get(0);
@@ -245,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     /* 현재 위치정보 DB저장 */
                     String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                     String Longitude = String.valueOf(location.getLongitude());
-                    String PhoneNum = getPhoneNumber();
+                    String PhoneNum = "010-9271-3205";//getPhoneNumber();
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
 
 
@@ -255,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             try {
                                 JSONObject jsonObject = new JSONObject(response);
                                 boolean emergency = jsonObject.getBoolean("emergency");
+                                Log.d(TAG, "emergency : "+emergency);
 
                                 int number = jsonObject.getInt("number");
                                 Log.d(TAG,"number : " + number);
@@ -272,23 +239,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 setCurrentLocation(lat, lng); //현재 위치에 마커 생성
 
-//                            if(emergency){
-//                                Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
-//                            }
-//                            else{
-//                                Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
-//                            }
-                            } catch (JSONException e) {
+                                 if(emergency){
+                                    Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
+                                 }
+                                 else{
+                                    Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
+                                 }
+                            }
+
+                            catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
                         }
                     };
+
                     // 서버로 Volley를 이용해서 요청
-                    AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, responseListener);
+                    AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, emg_button, responseListener);
                     RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
                     queue.add(addressRequest);
-
 
                     Log.d(TAG, "onLocationResult : " + markerSnippet);
 
@@ -302,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
                     mCurrentLocatiion = location;
-                }
+
             }
         }
 
@@ -310,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     };
 
 
-
+/*
     @SuppressLint({"MissionPermission", "HardwareIds"})
     public String getPhoneNumber() {
 
@@ -360,6 +329,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 };
+ */
 
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
