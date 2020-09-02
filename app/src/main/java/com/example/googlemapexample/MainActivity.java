@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     /* 현재 위치정보 DB저장 */
                     String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                     String Longitude = String.valueOf(location.getLongitude());
-                    String PhoneNum = "010-9271-3205";//getPhoneNumber();
+                    String PhoneNum = getPhoneNumber();
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
 
 
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     };
 
 
-/*
+
     @SuppressLint({"MissionPermission", "HardwareIds"})
     public String getPhoneNumber() {
 
@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 };
- */
+
 
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
