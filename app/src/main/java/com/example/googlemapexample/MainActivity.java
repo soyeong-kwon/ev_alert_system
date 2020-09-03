@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     /* 현재 위치정보 DB저장 */
                     String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                     String Longitude = String.valueOf(location.getLongitude());
-                    String PhoneNum = getPhoneNumber();
+                    String PhoneNum = "010-9271-3205";//getPhoneNumber();
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
 
 
@@ -236,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     Log.d(TAG, "Longitude : "+lng[number]);
                                     number--;
                                 }
-
                                 setCurrentLocation(lat, lng); //현재 위치에 마커 생성
 
                                  if(emergency){
@@ -278,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     };
 
-
+/*
 
     @SuppressLint({"MissionPermission", "HardwareIds"})
     public String getPhoneNumber() {
@@ -329,6 +328,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 };
+
+ */
 
 
 
@@ -432,6 +433,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng currentLatLng = new LatLng(latitude, longitude); // maker 위치 ( 0.001 = 약 100m )
             Log.d(TAG, "currentLatLng : "+latitude + ", "+longitude);
 
+            if(getDistance(currentPosition,currentLatLng)<200){ // 반경 내 마커가 있을 때,
+                Log.d(TAG, "WARRING !! :"+getDistance(currentPosition,currentLatLng));
+            }
+
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(currentLatLng);
             //markerOptions.title(markerTitle);
@@ -447,6 +452,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
 
+    }
+
+    public double getDistance(LatLng LatLng1, LatLng LatLng2) {
+        double distance = 0;
+        Location locationA = new Location("A");
+        locationA.setLatitude(LatLng1.latitude);
+        locationA.setLongitude(LatLng1.longitude);
+        Location locationB = new Location("B");
+        locationB.setLatitude(LatLng2.latitude);
+        locationB.setLongitude(LatLng2.longitude);
+        distance = locationA.distanceTo(locationB);
+
+        return distance; // m 단위
     }
 
     public void setDefaultLocation()
