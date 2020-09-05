@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     boolean needRequest = false;
     private int wait = 0;
+    private final static int myLatLng = 99;
 
     private int emg_button=1; //1일때 긴급자동차
     private  String PhoneNumber = "";
@@ -114,8 +115,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mLayout2=findViewById(R.id.layout_main);
         locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL_MS) //위치가 update 되는 주기(1000ms=1초)
-                .setFastestInterval(FASTEST_UPDATE_INTERVAL_MS); //위치 획득 후 update 되는 주기 (500ms=0.5초)
+                .setInterval(UPDATE_INTERVAL_MS) //위치가 update 되는 주기(3000ms=3초)
+                .setFastestInterval(FASTEST_UPDATE_INTERVAL_MS); //위치 획득 후 update 되는 주기 (2000ms=2초)
 
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
@@ -151,8 +152,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setDefaultLocation();
         getPermission();
 
+
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
         mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
             @Override
             public void onCameraMove() {
@@ -170,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if (locationList.size() > 0) {
 
-                    Log.d(TAG, "나는 긴급자동차");
                     Location location = locationList.get(locationList.size() - 1);
                     //location = locationList.get(0);
 
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     /* 현재 위치정보 DB저장 */
                     String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                     String Longitude = String.valueOf(location.getLongitude());
-                    String PhoneNum = "010-9271-3205";//PhoneNumber;
+                    String PhoneNum = PhoneNumber;
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
 
                     Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
@@ -232,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if(wait!=1) {
                         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition);
                         mMap.moveCamera(cameraUpdate);
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                        mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
                     }
                     wait=0;
 
@@ -346,10 +347,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         int i=0;
 
+        while(currentMarker[i]!=null){
+            currentMarker[i].remove();
+            i++;
+        }
+
+        i=0;
         while(lat[i]!=null)
         {
-            if (currentMarker[i] != null) currentMarker[i].remove();
-
             double latitude = Double.parseDouble(lat[i]);
             double longitude = Double.parseDouble(lng[i]);
 
