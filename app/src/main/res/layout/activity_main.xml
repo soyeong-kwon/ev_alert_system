@@ -23,8 +23,8 @@
         android:id="@+id/togglebutton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textOff="ON"
-        android:textOn="OFF"
+        android:textOff="긴급자동차"
+        android:textOn="일반자동차"
         android:theme="@style/ToggleButton.CustomTheme"
         />
 

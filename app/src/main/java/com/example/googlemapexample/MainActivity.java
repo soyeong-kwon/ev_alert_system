@@ -77,14 +77,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     //gps가 켜져 있는 동안에 실시간으로 바뀌는 위치정보를 얻기 위함
-    private static final int UPDATE_INTERVAL_MS = 5000;//10초
-    private static final int FASTEST_UPDATE_INTERVAL_MS = 10000; // 20초
+    private static final int UPDATE_INTERVAL_MS = 1000;//1초
+    private static final int FASTEST_UPDATE_INTERVAL_MS = 500; // 0.5초
     // onRequestPermissionsResult에서 수신된 결과에서 ActivityCompat.requestPermissions를 사용한 퍼미션 요청을 구별하기 위해 사용됩니다.
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     boolean needRequest = false;
     private int wait = 0;
-    // 앱을 실행하기 위해 필요한 퍼미션을 정의합니다.
+
     private int emg_button=1; //1일때 긴급자동차
+    private  String PhoneNumber = "";
 
     String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -99,8 +100,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private View mLayout2;
     private View mLayout;
-    // Snackbar 사용하기 위해서는 View가 필요합니다.
-    // (참고로 Toast에서는 Context가 필요했습니다.)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mLayout2=findViewById(R.id.layout_main);
         locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL_MS)
-                .setFastestInterval(FASTEST_UPDATE_INTERVAL_MS);
+                .setInterval(UPDATE_INTERVAL_MS) //위치가 update 되는 주기(1000ms=1초)
+                .setFastestInterval(FASTEST_UPDATE_INTERVAL_MS); //위치 획득 후 update 되는 주기 (500ms=0.5초)
 
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
@@ -127,16 +126,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         final ToggleButton tb=(ToggleButton)this.findViewById(R.id.togglebutton);
-        tb.setText("ON");
+        tb.setText("긴급자동차");
         tb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean on) {
                 if(on){
-                    tb.setText("OFF");
+                    tb.setText("일반자동차");
                     emg_button=0;
                 }
                 else{
-                    tb.setText("ON");
+                    tb.setText("긴급자동차");
                     emg_button=1;
                 }
             }
@@ -148,37 +147,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap = googleMap;
 
-        //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에
-        //지도의 초기위치를 서울로 이동
         setDefaultLocation();
+        getPermission();
 
-        //런타임 퍼미션 처리
-        // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
-        int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED && hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
-            // 2. 이미 퍼미션을 가지고 있다면
-            startLocationUpdates(); // 3. 위치 업데이트 시작
-        } else {
-            //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
-            // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
-                // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
-                Snackbar.make(mLayout, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                        ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
-                    }
-                }).show();
-            } else {
-                // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
-                // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
-            }
-
-        }
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
@@ -203,17 +174,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //location = locationList.get(0);
 
                     currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
-
-                    String markerTitle = "**Current Location**";
                     String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude());
 
 
                     /* 현재 위치정보 DB저장 */
                     String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                     String Longitude = String.valueOf(location.getLongitude());
-                    String PhoneNum = "010-9271-3205";//getPhoneNumber();
+                    String PhoneNum = PhoneNumber;
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
-
 
                     Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
                         @Override
@@ -249,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     };
 
@@ -267,8 +234,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                     wait=0;
 
-
-
                     mCurrentLocatiion = location;
 
             }
@@ -277,18 +242,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     };
 
-/*
-
     @SuppressLint({"MissionPermission", "HardwareIds"})
-    public String getPhoneNumber() {
-
-        TelephonyManager telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        String PhoneNumber = "";
-        String PhoneNumber_Temp = "";
+     private void getPermission(){
+        Log.d(TAG, "getPermission()");
         int chkper_phonestate = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
         int chkper_phonenum = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS);
+        int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        String PhoneNumber_Temp = "";
+        TelephonyManager telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
-        if (chkper_phonenum == PackageManager.PERMISSION_GRANTED && chkper_phonestate == PackageManager.PERMISSION_GRANTED) {
+        if (chkper_phonenum == PackageManager.PERMISSION_GRANTED && chkper_phonestate == PackageManager.PERMISSION_GRANTED &&hasFineLocationPermission == PackageManager.PERMISSION_GRANTED && hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
             try {
                 if (telephony.getLine1Number() != null) {
                     PhoneNumber_Temp = telephony.getLine1Number();
@@ -299,39 +263,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (PhoneNumber_Temp.startsWith("+82")) {
                 PhoneNumber_Temp = PhoneNumber_Temp.replace("+82", "0");
                 PhoneNumber = PhoneNumberUtils.formatNumber(PhoneNumber_Temp);
-
-
+                startLocationUpdates(); // 3. 위치 업데이트 시작
             }
-            return PhoneNumber;
-
-
-        } else {
-        //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
-        // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
-            // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
-            Snackbar.make(mLayout2, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                    ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
-                }
-            }).show();
-            return "퍼미션을 요청합니다.";
-        } else {
-            // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
-            // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
-            return "퍼미션 허용을 부탁해요";
         }
+        else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
+                Snackbar.make(mLayout2, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                    }
+                }).show();
+            } else {
+                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+            }
 
-    }
-
-};
-
- */
-
-
+        }
+    };
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
     {
@@ -381,37 +329,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public String getCurrentAddress(LatLng latlng) {
-
-        //지오코더... GPS를 주소로 변환
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-        List<Address> addresses;
-        try {
-            addresses = geocoder.getFromLocation(
-                    latlng.latitude,
-                    latlng.longitude,
-                    1);
-        } catch (IOException ioException) {
-            //네트워크 문제
-            Toast.makeText(this, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
-            return "지오코더 서비스 사용불가";
-        } catch (IllegalArgumentException illegalArgumentException) {
-            Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
-            return "잘못된 GPS 좌표";
-        }
-
-        if (addresses == null || addresses.size() == 0) {
-            Toast.makeText(this, "주소 미발견", Toast.LENGTH_LONG).show();
-            return "주소 미발견";
-        } else {
-            Address address = addresses.get(0);
-            return address.getAddressLine(0).toString();
-        }
-    }
-
-
-
     public boolean checkLocationServicesStatus() {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -439,8 +356,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(currentLatLng);
-            //markerOptions.title(markerTitle);
-            //markerOptions.snippet(markerSnippet);
             markerOptions.draggable(true);
             BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
             Bitmap b=bitmapdraw.getBitmap();
@@ -459,18 +374,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Location locationA = new Location("A");
         locationA.setLatitude(LatLng1.latitude);
         locationA.setLongitude(LatLng1.longitude);
+
         Location locationB = new Location("B");
         locationB.setLatitude(LatLng2.latitude);
         locationB.setLongitude(LatLng2.longitude);
-        distance = locationA.distanceTo(locationB);
 
+        distance = locationA.distanceTo(locationB);
         return distance; // m 단위
     }
 
     public void setDefaultLocation()
     {
         //디폴트 위치, Seoul
-        LatLng DEFAULT_LOCATION = new LatLng(37.56, 126.97);
+        LatLng DEFAULT_LOCATION = new LatLng(35.832303, 128.757473);
         String markerTitle = "위치정보 가져올 수 없음";
         String markerSnippet = "위치 퍼미션과 GPS 활성 요부 확인하세요";
 
