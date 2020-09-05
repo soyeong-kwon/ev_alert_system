@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     //gps가 켜져 있는 동안에 실시간으로 바뀌는 위치정보를 얻기 위함
-    private static final int UPDATE_INTERVAL_MS = 1000;//1초
-    private static final int FASTEST_UPDATE_INTERVAL_MS = 500; // 0.5초
+    private static final int UPDATE_INTERVAL_MS = 3000;// 3초
+    private static final int FASTEST_UPDATE_INTERVAL_MS = 2000; // 2초
     // onRequestPermissionsResult에서 수신된 결과에서 ActivityCompat.requestPermissions를 사용한 퍼미션 요청을 구별하기 위해 사용됩니다.
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     boolean needRequest = false;
@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         Log.d(TAG, "onMapReady :");
@@ -180,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     /* 현재 위치정보 DB저장 */
                     String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                     String Longitude = String.valueOf(location.getLongitude());
-                    String PhoneNum = PhoneNumber;
+                    String PhoneNum = "010-9271-3205";//PhoneNumber;
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
 
                     Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
@@ -231,6 +232,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if(wait!=1) {
                         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition);
                         mMap.moveCamera(cameraUpdate);
+                        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                     }
                     wait=0;
 
@@ -241,6 +243,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     };
+
+
 
     @SuppressLint({"MissionPermission", "HardwareIds"})
      private void getPermission(){
@@ -280,6 +284,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     };
+
+
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
     {
@@ -519,5 +525,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    protected void onPause(){
+        super.onPause();
+        String PhoneNum = "010-9271-3205";//PhoneNumber;
 
+        Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    boolean success = jsonObject.getBoolean("success");
+
+                    if(success){
+                        Log.d(TAG, "Success !");
+                    }
+                    else{
+                        Log.d(TAG, "Fail..");
+                    }
+                }
+
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        // 서버로 Volley를 이용해서 요청
+        DestroyRequest destroyRequest = new DestroyRequest(PhoneNum, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+        queue.add(destroyRequest);
+
+        Log.d(TAG, "Destroy !!");
+    }
 }
