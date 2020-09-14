@@ -26,6 +26,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -118,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setInterval(UPDATE_INTERVAL_MS) //위치가 update 되는 주기(3000ms=3초)
                 .setFastestInterval(FASTEST_UPDATE_INTERVAL_MS); //위치 획득 후 update 되는 주기 (2000ms=2초)
 
-
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(locationRequest);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -153,6 +155,38 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getPermission();
 
 
+        /*
+        int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED && hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
+            // 2. 이미 퍼미션을 가지고 있다면
+            startLocationUpdates(); // 3. 위치 업데이트 시작
+        } else {
+            //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
+            // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
+                // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
+                Snackbar.make(mLayout, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
+                        ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                    }
+                }).show();
+            } else {
+                // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
+                // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
+                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+            }
+
+        }
+
+         */
+
+
+
+
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
         mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
@@ -183,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                     String Longitude = String.valueOf(location.getLongitude());
                     String PhoneNum = PhoneNumber;
+                    //String PhoneNum = "010-9271-3205";
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
 
                     Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
@@ -247,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
+
     @SuppressLint({"MissionPermission", "HardwareIds"})
      private void getPermission(){
         Log.d(TAG, "getPermission()");
@@ -287,6 +323,66 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     };
 
 
+
+
+    public void setCurrentLocation(String[] lat, String[] lng) {
+
+        int i=0;
+
+        while(currentMarker[i]!=null){
+            currentMarker[i].remove();
+            i++;
+        }
+
+        i=0;
+        while(lat[i]!=null)
+        {
+            double latitude = Double.parseDouble(lat[i]);
+            double longitude = Double.parseDouble(lng[i]);
+
+            LatLng currentLatLng = new LatLng(latitude, longitude); // maker 위치 ( 0.001 = 약 100m )
+            Log.d(TAG, "currentLatLng : "+latitude + ", "+longitude);
+
+            if(getDistance(currentPosition,currentLatLng)<200){ // 반경 내 마커가 있을 때,
+                Log.d(TAG, "WARRING !! :"+getDistance(currentPosition,currentLatLng));
+                warring();
+            }
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(currentLatLng);
+            markerOptions.draggable(true);
+            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
+            Bitmap b=bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70,50, false); // maker 크기
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+
+            currentMarker[i] = mMap.addMarker(markerOptions);
+            i++;
+        }
+    }
+
+    public void warring(){
+        Animation mAnimation = new AlphaAnimation(1.0f, 0.3f);
+        mAnimation.setDuration(1000);
+        mAnimation.setInterpolator(new LinearInterpolator());
+        mAnimation.setRepeatCount(3);
+        mAnimation.setRepeatMode(Animation.REVERSE);
+        mLayout.startAnimation(mAnimation);
+    }
+
+    public double getDistance(LatLng LatLng1, LatLng LatLng2) {
+        double distance = 0;
+        Location locationA = new Location("A");
+        locationA.setLatitude(LatLng1.latitude);
+        locationA.setLongitude(LatLng1.longitude);
+
+        Location locationB = new Location("B");
+        locationB.setLatitude(LatLng2.latitude);
+        locationB.setLongitude(LatLng2.longitude);
+
+        distance = locationA.distanceTo(locationB);
+        return distance; // m 단위
+    }
 
     private void startLocationUpdates() //위치를 이동하면서 계속 업데이트하는 과정
     {
@@ -341,57 +437,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    }
-
-    public void setCurrentLocation(String[] lat, String[] lng) {
-
-        int i=0;
-
-        while(currentMarker[i]!=null){
-            currentMarker[i].remove();
-            i++;
-        }
-
-        i=0;
-        while(lat[i]!=null)
-        {
-            double latitude = Double.parseDouble(lat[i]);
-            double longitude = Double.parseDouble(lng[i]);
-
-            LatLng currentLatLng = new LatLng(latitude, longitude); // maker 위치 ( 0.001 = 약 100m )
-            Log.d(TAG, "currentLatLng : "+latitude + ", "+longitude);
-
-            if(getDistance(currentPosition,currentLatLng)<200){ // 반경 내 마커가 있을 때,
-                Log.d(TAG, "WARRING !! :"+getDistance(currentPosition,currentLatLng));
-            }
-
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(currentLatLng);
-            markerOptions.draggable(true);
-            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
-            Bitmap b=bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70,50, false); // maker 크기
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-
-            currentMarker[i] = mMap.addMarker(markerOptions);
-            i++;
-        }
-
-
-    }
-
-    public double getDistance(LatLng LatLng1, LatLng LatLng2) {
-        double distance = 0;
-        Location locationA = new Location("A");
-        locationA.setLatitude(LatLng1.latitude);
-        locationA.setLongitude(LatLng1.longitude);
-
-        Location locationB = new Location("B");
-        locationB.setLatitude(LatLng2.latitude);
-        locationB.setLongitude(LatLng2.longitude);
-
-        distance = locationA.distanceTo(locationB);
-        return distance; // m 단위
     }
 
     public void setDefaultLocation()
