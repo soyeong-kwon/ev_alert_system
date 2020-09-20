@@ -87,8 +87,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean needRequest = false;
     private int wait = 0;
     private final static int myLatLng = 99;
+    private ToggleButton tb;
+    private int emg_button=1;
 
-    private int emg_button=1; //1일때 긴급자동차
     private  String PhoneNumber = "";
 
     String[] REQUIRED_PERMISSIONS = {
@@ -128,21 +129,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.googleMap);
         mapFragment.getMapAsync(this);
 
-        final ToggleButton tb=(ToggleButton)this.findViewById(R.id.togglebutton);
-        tb.setText("긴급자동차");
-        tb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean on) {
-                if(on){
-                    tb.setText("일반자동차");
-                    emg_button=0;
+        tb=(ToggleButton)this.findViewById(R.id.togglebutton);
+        tb.setText("버튼을 클릭하실 수 없습니다.");
+    }
+
+    private void buttonactivate(boolean emergency) {
+        Log.d(TAG,"Emergency button: "+ emg_button);
+        if(emergency){
+            Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
+            Log.d(TAG,"버튼: 사용 가능");
+
+            tb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean on) {
+                    if(on){
+                        tb.setText("일반자동차");
+                        emg_button=0;
+                        Log.d(TAG,"Emergency button: "+ emg_button);
+                    }
+                    else{
+                        tb.setText("긴급자동차");
+                        emg_button=1;
+                        Log.d(TAG,"Emergency button: "+emg_button);
+                    }
                 }
-                else{
-                    tb.setText("긴급자동차");
-                    emg_button=1;
-                }
-            }
-        });
+            });
+        }
+        else{
+            emg_button=0;
+            Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
+            tb.setClickable(false);
+            Log.d(TAG,"버튼: 사용 불가");
+        }
+
     }
 
     @Override
@@ -153,39 +172,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         setDefaultLocation();
         getPermission();
-
-
-        /*
-        int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED && hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
-            // 2. 이미 퍼미션을 가지고 있다면
-            startLocationUpdates(); // 3. 위치 업데이트 시작
-        } else {
-            //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
-            // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
-                // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
-                Snackbar.make(mLayout, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                        ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
-                    }
-                }).show();
-            } else {
-                // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
-                // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
-            }
-
-        }
-
-         */
-
-
-
 
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
@@ -220,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //String PhoneNum = "010-9271-3205";
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
 
-                    Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
+                Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
                         @Override
                         public void onResponse(String response) {
                             try {
@@ -242,13 +228,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     number--;
                                 }
                                 setCurrentLocation(lat, lng); //현재 위치에 마커 생성
-
-                                 if(emergency){
-                                    Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
-                                 }
-                                 else{
-                                    Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
-                                 }
+                                buttonactivate(emergency);
                             }
 
                             catch (JSONException e) {
@@ -257,22 +237,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     };
 
-                    // 서버로 Volley를 이용해서 요청
-                    AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, emg_button, responseListener);
-                    RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                    queue.add(addressRequest);
+                // 서버로 Volley를 이용해서 요청
+                AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, emg_button, responseListener);
+                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                queue.add(addressRequest);
 
-                    Log.d(TAG, "onLocationResult : " + markerSnippet);
+                Log.d(TAG, "onLocationResult : " + markerSnippet);
 
 
-                    if(wait!=1) {
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition);
-                        mMap.moveCamera(cameraUpdate);
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
-                    }
-                    wait=0;
+                if(wait!=1) {
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentPosition);
+                    mMap.moveCamera(cameraUpdate);
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
+                }
+                wait=0;
 
-                    mCurrentLocatiion = location;
+                mCurrentLocatiion = location;
 
             }
         }
