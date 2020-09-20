@@ -14,7 +14,6 @@ $sql2= "insert into address(phonenum, Latitude, Longitude) values('$phonenum', '
 $sql3= "select * from address";
 $sql_update1 = "update address set Latitude='$latitude' where phonenum='$phonenum'";
 $sql_update2 = "update address set Longitude='$longitude' where phonenum='$phonenum'";
-
 $sql_delete = "delete from address where phonenum='$phonenum'";
 
 
@@ -28,24 +27,25 @@ $response["Longitude0"]='0';
 $res= $conn->query($sql);
 $res1= $conn->query($sql1);
 
-// DB에 phonenum가 있고, 이미 insert 된 phonenum이 없을 때, 위치정보 DB에 저장 : 긴급자동차 확인
-if(mysqli_fetch_array($res1)!=NULL && $emg_button==1){
-    if(mysqli_fetch_array($res)==NULL){
-        $res2= $conn->query($sql2);
-    }
-
-    else{
-        $res_lat= $conn->query($sql_update1);
-        $res_lng= $conn->query($sql_update2);
-    }
-    $response["emergency"]=true;
-}
-
-if(mysqli_fetch_array($res)!=NULL && $emg_button==0)
+if(mysqli_fetch_array($res1)!=NULL)
 {
-    $res_delete = $conn->query($sql_delete);
+    //긴급자동차 등록된 사람이라면
+    $response["emergency"]=true;
+    if($emg_button==1)
+    {
+        if(mysqli_fetch_array($res)==NULL){
+            $res2= $conn->query($sql2);
+        }
+        else{
+            $res_lat= $conn->query($sql_update1);
+            $res_lng= $conn->query($sql_update2);
+        }
+    }
+    else if(mysqli_fetch_array($res)!=NULL && $emg_button==0)
+    {
+        $res_delete = $conn->query($sql_delete);
+    }
 }
-
 
 $num=0;
 
