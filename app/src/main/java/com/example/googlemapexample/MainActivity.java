@@ -14,15 +14,22 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,6 +41,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -158,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         else{
             emg_button=0;
             Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
+            tb.setText("일반자동차");
             tb.setClickable(false);
             Log.d(TAG,"버튼: 사용 불가");
         }
@@ -207,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
+                        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                         @Override
                         public void onResponse(String response) {
                             try {
@@ -233,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             catch (JSONException e) {
                                 e.printStackTrace();
+
                             }
                         }
                     };
@@ -302,9 +313,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     };
 
-
-
-
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void setCurrentLocation(String[] lat, String[] lng) {
 
         int i=0;
@@ -325,7 +334,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if(getDistance(currentPosition,currentLatLng)<200){ // 반경 내 마커가 있을 때,
                 Log.d(TAG, "WARRING !! :"+getDistance(currentPosition,currentLatLng));
-                warring();
+                double distance=getDistance(currentPosition,currentLatLng);
+                warning(distance);
             }
 
             MarkerOptions markerOptions = new MarkerOptions();
@@ -341,7 +351,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public void warring(){
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void warning(double distance){
+        if(emg_button==0){
+            soundwarning(distance);
+            viewwarning();
+        }
+    }
+
+    public void soundwarning(double distance){
+        Vibrator vibrator; //진동 알람 객체
+        MediaPlayer player; //소리 알람 객체
+        vibrator=(Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(new long []{500,1000,500,1000},-1);
+        player=MediaPlayer.create(this,R.raw.little_urgent);
+        player.start();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void viewwarning(){
         Animation mAnimation = new AlphaAnimation(1.0f, 0.3f);
         mAnimation.setDuration(1000);
         mAnimation.setInterpolator(new LinearInterpolator());
