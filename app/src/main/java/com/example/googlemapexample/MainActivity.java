@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                 String Longitude = String.valueOf(location.getLongitude());
                 String PhoneNum = PhoneNumber;
-                //String PhoneNum = "010-2213-3212";
+
                 Log.d(TAG, "PhoneNum : "+PhoneNum);
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
@@ -368,8 +368,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         MediaPlayer player; //소리 알람 객체
         vibrator=(Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(new long []{500,1000,500,1000},-1);
-        player=MediaPlayer.create(this,R.raw.little_urgent);
-        player.start();
+        if(distance<=500 && distance>=200)
+        {
+            player=MediaPlayer.create(this,R.raw.emergency_500m);
+            player.start();
+        }
+        else if(distance<200&&distance>=100)
+        {
+            player=MediaPlayer.create(this,R.raw.emergency_200m);
+            player.start();
+        }
+        else if(distance<100&&distance>=50)
+        {
+            player=MediaPlayer.create(this,R.raw.emergency_nearby);
+            player.start();
+        }
+        else if(distance<50&&distance<=10)
+        {
+            player=MediaPlayer.create(this,R.raw.little_urgent);
+            player.start();
+        }
+
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
