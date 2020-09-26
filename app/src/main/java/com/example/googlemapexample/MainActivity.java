@@ -201,52 +201,52 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if (locationList.size() > 0) {
 
-                    Location location = locationList.get(locationList.size() - 1);
-                    //location = locationList.get(0);
+                Location location = locationList.get(locationList.size() - 1);
+                //location = locationList.get(0);
 
-                    currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                    String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude());
+                currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+                String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude());
 
 
-                    /* 현재 위치정보 DB저장 */
-                    String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
-                    String Longitude = String.valueOf(location.getLongitude());
-                    String PhoneNum = PhoneNumber;
-                    //String PhoneNum = "010-9271-3205";
-                    Log.d(TAG, "PhoneNum : "+PhoneNum);
+                /* 현재 위치정보 DB저장 */
+                String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
+                String Longitude = String.valueOf(location.getLongitude());
+                String PhoneNum = PhoneNumber;
+                //String PhoneNum = "010-9271-3205";
+                Log.d(TAG, "PhoneNum : "+PhoneNum);
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
-                        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                boolean emergency = jsonObject.getBoolean("emergency");
-                                Log.d(TAG, "emergency : "+emergency);
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean emergency = jsonObject.getBoolean("emergency");
+                            Log.d(TAG, "emergency : "+emergency);
 
-                                int number = jsonObject.getInt("number");
-                                Log.d(TAG,"number : " + number);
-                                String[] lat = new String[number+2];
-                                String[] lng = new String[number+2];
-                                Log.d(TAG, "String success !!");
+                            int number = jsonObject.getInt("number");
+                            Log.d(TAG,"number : " + number);
+                            String[] lat = new String[number+2];
+                            String[] lng = new String[number+2];
+                            Log.d(TAG, "String success !!");
 
-                                while(number>=0) {
-                                    lat[number] = jsonObject.getString("Latitude"+number);
-                                    lng[number] = jsonObject.getString("Longitude"+number);
-                                    Log.d(TAG, "Latitude : "+lat[number]);
-                                    Log.d(TAG, "Longitude : "+lng[number]);
-                                    number--;
-                                }
-                                setCurrentLocation(lat, lng); //현재 위치에 마커 생성
-                                buttonactivate(emergency);
+                            while(number>=0) {
+                                lat[number] = jsonObject.getString("Latitude"+number);
+                                lng[number] = jsonObject.getString("Longitude"+number);
+                                Log.d(TAG, "Latitude : "+lat[number]);
+                                Log.d(TAG, "Longitude : "+lng[number]);
+                                number--;
                             }
-
-                            catch (JSONException e) {
-                                e.printStackTrace();
-
-                            }
+                            setCurrentLocation(lat, lng); //현재 위치에 마커 생성
+                            buttonactivate(emergency);
                         }
-                    };
+
+                        catch (JSONException e) {
+                            e.printStackTrace();
+
+                        }
+                    }
+                };
 
                 // 서버로 Volley를 이용해서 요청
                 AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, emg_button, responseListener);
@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     @SuppressLint({"MissionPermission", "HardwareIds"})
-     private void getPermission(){
+    private void getPermission(){
         Log.d(TAG, "getPermission()");
         int chkper_phonestate = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
         int chkper_phonenum = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS);
@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.d(TAG, "currentLatLng : "+latitude + ", "+longitude);
 
             if(getDistance(currentPosition,currentLatLng)<200){ // 반경 내 마커가 있을 때,
-                Log.d(TAG, "WARRING !! :"+getDistance(currentPosition,currentLatLng));
+                Log.d(TAG, "WARNING !! :"+getDistance(currentPosition,currentLatLng));
                 double distance=getDistance(currentPosition,currentLatLng);
                 warning(distance);
             }
@@ -364,8 +364,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         MediaPlayer player; //소리 알람 객체
         vibrator=(Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(new long []{500,1000,500,1000},-1);
-        player=MediaPlayer.create(this,R.raw.little_urgent);
-        player.start();
+        if(distance<=500 && distance>=200)
+        {
+            player=MediaPlayer.create(this,R.raw.emergency_500m);
+            player.start();
+        }
+        else if(distance<200&&distance>=100)
+        {
+            player=MediaPlayer.create(this,R.raw.emergency_200m);
+            player.start();
+        }
+        else if(distance<100&&distance>=50)
+        {
+            player=MediaPlayer.create(this,R.raw.emergency_nearby);
+            player.start();
+        }
+        else if(distance<50&&distance<=10)
+        {
+            player=MediaPlayer.create(this,R.raw.little_urgent);
+            player.start();
+        }
+
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -617,3 +637,4 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.d(TAG, "Destroy !!");
     }
 }
+
