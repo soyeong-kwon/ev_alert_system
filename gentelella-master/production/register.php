@@ -20,7 +20,7 @@ mysqli_query($conn,'SET NAMES utf8');
     $sql3="set @count=0";
     $sql4="update personinfo set id=@count:=@count+1";
     
-    $res= $conn->query($sql);
+    $res=$conn->query($sql);
     $res=$conn->query($sql2);
     $res=$conn->query($sql3);
     $res=$conn->query($sql4);

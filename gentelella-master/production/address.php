@@ -8,10 +8,13 @@ $longitude = $_POST['Longitude'];
 $phonenum = $_POST['PhoneNum'];
 $emg_button = $_POST['emg_button'];
 
+$latitude_temp = (double)$latitude;
+$longitude_temp = (double)$longitude;
+
 $sql= "select * from address where phonenum = '$phonenum'";
 $sql1= "select * from personinfo where phonenum = '$phonenum'";
 $sql2= "insert into address(phonenum, Latitude, Longitude) values('$phonenum', '$latitude','$longitude')";
-$sql3= "select * from address";
+$sql3= "select * from address where Latitude<$latitude_temp+0.005 and Latitude>$latitude_temp-0.005 and Longitude<$longitude_temp+0.005 and Longitude>$longitude_temp-0.005";
 $sql_update1 = "update address set Latitude='$latitude' where phonenum='$phonenum'";
 $sql_update2 = "update address set Longitude='$longitude' where phonenum='$phonenum'";
 $sql_delete = "delete from address where phonenum='$phonenum'";
