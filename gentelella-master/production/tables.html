@@ -117,7 +117,7 @@
                                     $pw = '12345678';
                                     $dbName = 'DajungDB';
                                     $conn = new mysqli($host, $user, $pw, $dbName);
-                                    $sql = "select *from personinfo";
+                                    $sql = "select * from personinfo"; // 모든 정보 출력
                                     $res = $conn->query($sql);
                                     ?>
                                     <form method="POST" action="delete.php">
@@ -127,6 +127,7 @@
                                             <th>#</th>
                                             <th>이름</th>
                                             <th>단말기 전화번호</th>
+                                            <th>이메일 주소</th>
                                             <th>구분</th>
                                             <th>관리</th>
                                         </tr>
@@ -134,19 +135,21 @@
                                     <tbody>
                                         
                                     <?php
-                                        while ($row=mysqli_fetch_array($res))
+                                        while ($row=mysqli_fetch_array($res)) // row 형태로 한 줄씩 출력
                                         {?>
                                         <tr>
                                             <input type="hidden" name="phonenum" value="<?php echo $row['phonenum']?>">
                                             <th scope="row"> <?php echo $row['id']; ?></th>
                                             <td><?php echo $row['name']; ?></td>
                                             <td><?php echo $row['phonenum']; ?></td>
+                                            <td><?php echo $row['emailID']; ?></td>
                                             <td><?php echo $row['cartype']; ?></td>
                                             <td><button type="submit"> 삭제 </button></td>                                    
                                         </tr>
                                     <?php } ?>
                                     </tbody>
                                 </table>
+                                        </form>
                                         </form>
 
                             </div>
@@ -199,6 +202,68 @@
                                     </tbody>
                                 </table>
                                       
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h2>Approval</h2>
+                                
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+
+                                <?php
+                                    header("Content-Type: text/html; charset=UTF-8");
+                                    $host = 'dajung-db.c6ivw6dubpql.ap-northeast-2.rds.amazonaws.com';
+                                    $user = 'dajung';
+                                    $pw = '12345678';
+                                    $dbName = 'DajungDB';
+                                    $conn = new mysqli($host, $user, $pw, $dbName);
+                                    $sql = "select *from personinfo"; // 모든 정보 출력
+                                    $res = $conn->query($sql);
+                                    ?>
+                                    <form method="POST" action="sendmail.php">
+                                <table class="table table-bordered">
+                                    <thead>                                        
+                                        <tr>
+                                            <th>#</th>
+                                            <th>이름</th>
+                                            <th>단말기 전화번호</th>
+                                            <th>이메일 주소</th>
+                                            <th>구분</th>
+                                            <th>승인요청</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    <?php
+                                        while ($row=mysqli_fetch_array($res)) // row 형태로 한 줄씩 출력
+                                        {?>
+                                        <tr>
+                                            <input type="hidden" name="phonenum" value="<?php echo $row['phonenum']?>">
+                                            <th scope="row"> <?php echo $row['id']; ?></th>
+                                            <td><?php echo $row['name']; ?></td>
+                                            <td><?php echo $row['phonenum']; ?></td>
+                                            <td><?php echo $row['emailID']; ?></td>
+                                            <td><?php echo $row['cartype']; ?></td>
+                                            <td><button type="submit"> 승인</button></td>                                    
+                                        </tr>
+
+
+                                    <?php } ?>
+                                    </tbody>
+                                </table>
+
+                                
+
+                                        </form>
 
                             </div>
                         </div>
