@@ -98,7 +98,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ToggleButton tb;
     private int emg_button=1;
 
-    private  String PhoneNumber = "";
+    private  String PhoneNum = "";
+    //private String PhoneNum = "010-9271-3205";
 
     String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -181,6 +182,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         setDefaultLocation();
         getPermission();
+        
+        /*
+        int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED && hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
+            // 2. 이미 퍼미션을 가지고 있다면
+            startLocationUpdates(); // 3. 위치 업데이트 시작
+        } else {
+            //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
+            // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
+                // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
+                Snackbar.make(mLayout, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
+                        ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                    }
+                }).show();
+            } else {
+                // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
+                // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
+                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+            }
+
+        }
+
+         */
+
+
 
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
@@ -208,10 +240,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude());
 
 
-                /* 현재 위치정보 DB저장 */
-                String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
-                String Longitude = String.valueOf(location.getLongitude());
-                String PhoneNum = PhoneNumber;
+
+                    /* 현재 위치정보 DB저장 */
+                    String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
+                    String Longitude = String.valueOf(location.getLongitude());
+                    Log.d(TAG, "PhoneNum : "+PhoneNum);
 
                 Log.d(TAG, "PhoneNum : "+PhoneNum);
 
@@ -294,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             if (PhoneNumber_Temp.startsWith("+82")) {
                 PhoneNumber_Temp = PhoneNumber_Temp.replace("+82", "0");
-                PhoneNumber = PhoneNumberUtils.formatNumber(PhoneNumber_Temp);
+                PhoneNum = PhoneNumberUtils.formatNumber(PhoneNumber_Temp);
                 startLocationUpdates(); // 3. 위치 업데이트 시작
             }
         }
@@ -313,7 +346,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     };
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
+
     public void setCurrentLocation(String[] lat, String[] lng) {
 
         int i=0;
@@ -332,24 +366,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng currentLatLng = new LatLng(latitude, longitude); // maker 위치 ( 0.001 = 약 100m )
             Log.d(TAG, "currentLatLng : "+latitude + ", "+longitude);
 
-            if(getDistance(currentPosition,currentLatLng)<500) { // 500m 반경 내에 긴급자동차가 있을 경우에만 마커를 표시함
-
-                if (getDistance(currentPosition, currentLatLng) < 200) { // 반경 내 마커가 있을 때,
-                    Log.d(TAG, "WARRING !! :" + getDistance(currentPosition, currentLatLng));
-                    double distance = getDistance(currentPosition, currentLatLng);
-                    warning(distance);
-                }
-
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(currentLatLng);
-                markerOptions.draggable(true);
-                BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
-                Bitmap b = bitmapdraw.getBitmap();
-                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 50, false); // maker 크기
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-
-                currentMarker[i] = mMap.addMarker(markerOptions);
+            if (getDistance(currentPosition, currentLatLng) < 200 && getDistance(currentPosition, currentLatLng)!=0) { // 반경 내 마커가 있을 때,
+                Log.d(TAG, "WARRING !! :" + getDistance(currentPosition, currentLatLng));
+                double distance = getDistance(currentPosition, currentLatLng);
+                //warning(distance);
             }
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(currentLatLng);
+            markerOptions.draggable(true);
+            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.redcircle); // maker icon 변경
+            Bitmap b = bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 50, false); // maker 크기
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+
+            currentMarker[i] = mMap.addMarker(markerOptions);
             i++;
 
         }
@@ -610,7 +641,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onPause(){
         super.onPause();
-        String PhoneNum = PhoneNumber;
 
         Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
             @Override
