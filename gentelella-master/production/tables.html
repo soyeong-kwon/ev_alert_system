@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="images/profile.jpg" type="image/ico" />
 
     <title>20_IF029 긴급자동차 위치 알림서비스</title>
 
@@ -56,6 +57,7 @@
                                     <a><i class="fa fa-edit"></i> Register <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="register.html">Driver's Registeration</a></li>
+                                        <li><a href="delete.html">Driver's Info Delete</a></li>
                                     </ul>
                                 </li>
 
@@ -117,10 +119,15 @@
                                     $pw = '12345678';
                                     $dbName = 'DajungDB';
                                     $conn = new mysqli($host, $user, $pw, $dbName);
+<<<<<<< HEAD
                                     $sql = "select * from personinfo"; // 모든 정보 출력
+=======
+                                    $sql = "select *from personinfo";
+                                   
+>>>>>>> 2b7fa438985b4a8b61ca565c3ff99fac427e8b03
                                     $res = $conn->query($sql);
                                     ?>
-                                    <form method="POST" action="delete.php">
+                                    
                                 <table class="table table-bordered">
                                     <thead>                                        
                                         <tr>
@@ -133,24 +140,35 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+                                    
                                     <?php
+<<<<<<< HEAD
                                         while ($row=mysqli_fetch_array($res)) // row 형태로 한 줄씩 출력
+=======
+                                        while ($row=mysqli_fetch_assoc($res))
+>>>>>>> 2b7fa438985b4a8b61ca565c3ff99fac427e8b03
                                         {?>
                                         <tr>
-                                            <input type="hidden" name="phonenum" value="<?php echo $row['phonenum']?>">
+                                        <form method="POST" action="delete.php">
                                             <th scope="row"> <?php echo $row['id']; ?></th>
                                             <td><?php echo $row['name']; ?></td>
                                             <td><?php echo $row['phonenum']; ?></td>
                                             <td><?php echo $row['emailID']; ?></td>
                                             <td><?php echo $row['cartype']; ?></td>
-                                            <td><button type="submit"> 삭제 </button></td>                                    
+                                            
+                                            <input type="hidden" name="phonenum" value="<?= $row['phonenum']?>">
+                                            <td><input type="submit" value="삭제" /></td>    
+                                            </form>                                
                                         </tr>
                                     <?php } ?>
                                     </tbody>
                                 </table>
+<<<<<<< HEAD
                                         </form>
                                         </form>
+=======
+                                        
+>>>>>>> 2b7fa438985b4a8b61ca565c3ff99fac427e8b03
 
                             </div>
                         </div>

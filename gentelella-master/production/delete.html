@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -95,7 +95,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            <h3>Driver's Registeration</h3>
+                            <h3>Driver's Information Delete</h3>
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -104,13 +104,13 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
-                                    <h2>Driver's Registeration</h2>
+                                    <h2>Driver's Information Delete</h2>
                                     
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="x_content">
 
-                                    <form class="form-horizontal form-label-left" novalidate method="POST" action="register.php">
+                                    <form class="form-horizontal form-label-left" novalidate method="POST" action="delete2.php">
 
                                         <span class="section">Personal Info</span>
 
@@ -130,52 +130,30 @@
                                                 <input type="tel" id="phonenum" name="phonenum" required="required" data-validate-length="11" placeholder="본인 단말기 전화번호와 함께 -(하이픈)을 기입해주세요." class="form-control col-md-7 col-xs-12">
                                             </div>
                                         </div>
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="Email">
-                                                Email <span class="required">*</span>
-                                            </label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="email" id="emailID" name="emailID" class="form-control col-md-7 col-xs-12" data-validate-length-range="5,50" placeholder="이메일 주소를 기입해주세요." required="required">
-                                            </div>
-                                        </div>
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="Phone">
-                                                Cartype <span class="required">*</span>
-                                            </label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input type="text" id="cartype" name="cartype" required="required" data-validate-length="12" placeholder="(예)경찰차,소방차,싸이카 등"class="form-control col-md-7 col-xs-12">
-                                            </div>
-                                        </div>
                                     
                                         <div class="ln_solid"></div>
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
-<<<<<<< HEAD
-                                                <button id="send" type="submit" class="btn btn-success" data-target="#layerpop" data-toggle="modal" onclick="getElement();">등록 요청하기</button><br/>
-                                                <!-- submit type은 action을 php로 넘겨줍니다 -->
-                                            </div>  
-=======
-                                                <button id="send" type="button" class="btn btn-success" data-target="#exampleModal" data-toggle="modal">등록하기</button><br/>
-                                                
+                                                <button id="send" type="button" class="btn btn-success" data-target="#exampleModal" data-toggle="modal">삭제하기</button><br/>
+
                                                 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
 					                                    <div class="modal-content">
 						                                    <div class="modal-header">
-							                                    <h5 class="modal-title" id="exampleModalLabel">등록</h5>
+							                                    <h5 class="modal-title" id="exampleModalLabel">삭제</h5>
 						                                    	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							                                    	<span aria-hidden="true">&times;</span>
 						                                    	</button>
 						                                    </div>
-					                                    	<div class="modal-body">등록하시겠습니까?</div>
+					                                    	<div class="modal-body">삭제하시겠습니까?</div>
 					                                    	<div class="modal-footer">
-					                                		<button type="submit" class="btn btn-primary" >등록하기</button>
+					                                		<button type="submit" class="btn btn-primary" >삭제하기</button>
 					                                		<button type="button" class="btn btn-secondary" data-dismiss="modal">취소하기</button>
-					                                     	</div>
+					                                    	</div>
 				                                    	</div>
-			                                    	</div>
+			                                	    </div>
 			                                    </div>
                                             </div>
->>>>>>> 2b7fa438985b4a8b61ca565c3ff99fac427e8b03
                                         </div>
                                     </form>
                                 </div>
