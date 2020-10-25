@@ -228,7 +228,7 @@
                                     $pw = '12345678';
                                     $dbName = 'DajungDB';
                                     $conn = new mysqli($host, $user, $pw, $dbName);
-                                    $sql = "select *from approval"; // approval 테이블의 모든 정보 출력
+                                    $sql = "select * from approval"; // approval 테이블의 모든 정보 출력
                                     $res = $conn->query($sql);
                                     ?>
                                     
@@ -249,7 +249,7 @@
                                         while ($row=mysqli_fetch_array($res)) // row 형태로 한 줄씩 출력
                                         {?>
                                         <tr>
-                                        <form method="POST" action="delete.php">
+                                        <form method="POST" action="approval.php">
                                             <th scope="row"> <?php echo $row['id']; ?></th>
                                             <td><?php echo $row['name']; ?></td>
                                             <td><?php echo $row['phonenum']; ?></td>
@@ -265,10 +265,6 @@
                                     <?php } ?>
                                     </tbody>
                                 </table>
-
-                                
-
-                                        </form>
 
                             </div>
                         </div>
