@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         tb=(ToggleButton)this.findViewById(R.id.togglebutton);
-        tb.setText("버튼을 클릭하실 수 없습니다.");
+        //tb.setText("버튼을 클릭하실 수 없습니다.");
     }
 
     private void buttonactivate(boolean emergency) {
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onCheckedChanged(CompoundButton compoundButton, boolean on) {
                     if(on){
                         tb.setText("일반자동차");
-                        emg_button=0;
+                        emg_button=1;
                         Log.d(TAG,"Emergency button: "+ emg_button);
                     }
                     else{
@@ -164,10 +164,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
         }
-        else{
+        else{ //일반자동차
             emg_button=0;
             Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
-            tb.setText("일반자동차");
+            tb.setText("버튼을 클릭하실 수 없습니다.");
             tb.setClickable(false);
             Log.d(TAG,"버튼: 사용 불가");
         }
