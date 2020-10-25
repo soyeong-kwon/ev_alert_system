@@ -240,11 +240,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude());
 
 
+<<<<<<< HEAD
+                /* 현재 위치정보 DB저장 */
+                String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
+                String Longitude = String.valueOf(location.getLongitude());
+
+                String PhoneNum = PhoneNumber;
+=======
 
                     /* 현재 위치정보 DB저장 */
                     String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
                     String Longitude = String.valueOf(location.getLongitude());
                     Log.d(TAG, "PhoneNum : "+PhoneNum);
+>>>>>>> 38797da9c6e4803795c80173b162e025fc5ec7eb
 
                 Log.d(TAG, "PhoneNum : "+PhoneNum);
 
@@ -346,19 +354,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     };
 
+<<<<<<< HEAD
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void setCurrentLocation(String[] lat, String[] lng) {  //php에 응답. 긴급자동차 위치 마킹하는 함수
+=======
 
 
     public void setCurrentLocation(String[] lat, String[] lng) {
+>>>>>>> 38797da9c6e4803795c80173b162e025fc5ec7eb
 
         int i=0;
 
-        while(currentMarker[i]!=null){
+        while(currentMarker[i]!=null){  //원래 담고있던 마커 정보룰 초기화하는 while
             currentMarker[i].remove();
             i++;
         }
 
-        i=0;
-        while(lat[i]!=null)
+        i=0;  //새로 긴급자동차 정보를 담을거야
+        while(lat[i]!=null)  //긴급자동차의 위치가 들어오는 경우에 들어가는 while문
         {
             double latitude = Double.parseDouble(lat[i]);
             double longitude = Double.parseDouble(lng[i]);
@@ -380,8 +393,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 70, 50, false); // maker 크기
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
 
+<<<<<<< HEAD
+                currentMarker[i] = mMap.addMarker(markerOptions);  //
+           }
+            i++;  //i==1이 되거든
+
+            if(i!=0){
+                currentMarker[i].remove();
+            }  // 마커 사라짐
+=======
             currentMarker[i] = mMap.addMarker(markerOptions);
             i++;
+>>>>>>> 38797da9c6e4803795c80173b162e025fc5ec7eb
 
         }
     }
@@ -641,6 +664,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onPause(){
         super.onPause();
+<<<<<<< HEAD
+        String PhoneNum = "010-1111-1111"; //PhoneNumber;
+=======
+>>>>>>> 38797da9c6e4803795c80173b162e025fc5ec7eb
 
         Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
             @Override
