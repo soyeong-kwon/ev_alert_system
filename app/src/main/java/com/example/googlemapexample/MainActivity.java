@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
         }
-        else{ //일반자동차
+        else{ // 일반 자동차 
             emg_button=0;
             Toast.makeText(getApplicationContext(), "일반 자동차",Toast.LENGTH_SHORT).show();
             tb.setText("버튼을 클릭하실 수 없습니다.");
