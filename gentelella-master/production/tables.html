@@ -119,7 +119,7 @@
                                     $pw = '12345678';
                                     $dbName = 'DajungDB';
                                     $conn = new mysqli($host, $user, $pw, $dbName);
-                                    $sql = "select * from personinfo"; // 모든 정보 출력
+                                    $sql = "select * from personinfo"; // personinfo 테이블의 모든 정보 출력
                                     $res = $conn->query($sql);
                                     ?>
                                     
@@ -149,7 +149,7 @@
                                             
                                             <input type="hidden" name="phonenum" value="<?= $row['phonenum']?>">
                                             <td><input type="submit" value="삭제" /></td>    
-                                            </form>                                
+                                        </form>                                   
                                         </tr>
                                     <?php } ?>
                                     </tbody>
@@ -228,11 +228,11 @@
                                     $pw = '12345678';
                                     $dbName = 'DajungDB';
                                     $conn = new mysqli($host, $user, $pw, $dbName);
-                                    $sql = "select *from personinfo"; // 모든 정보 출력
+                                    $sql = "select *from approval"; // approval 테이블의 모든 정보 출력
                                     $res = $conn->query($sql);
                                     ?>
-                                    <form method="POST" action="sendmail.php">
-                                <table class="table table-bordered">
+                                    
+                                    <table class="table table-bordered">
                                     <thead>                                        
                                         <tr>
                                             <th>#</th>
@@ -244,18 +244,21 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+                                    
                                     <?php
                                         while ($row=mysqli_fetch_array($res)) // row 형태로 한 줄씩 출력
                                         {?>
                                         <tr>
-                                            <input type="hidden" name="phonenum" value="<?php echo $row['phonenum']?>">
+                                        <form method="POST" action="delete.php">
                                             <th scope="row"> <?php echo $row['id']; ?></th>
                                             <td><?php echo $row['name']; ?></td>
                                             <td><?php echo $row['phonenum']; ?></td>
                                             <td><?php echo $row['emailID']; ?></td>
                                             <td><?php echo $row['cartype']; ?></td>
-                                            <td><button type="submit"> 승인</button></td>                                    
+                                            
+                                            <input type="hidden" name="phonenum" value="<?= $row['phonenum']?>">
+                                            <td><input type="submit" value="승인" /></td>    
+                                        </form>                                
                                         </tr>
 
 
