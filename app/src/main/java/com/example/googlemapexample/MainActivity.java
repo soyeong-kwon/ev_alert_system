@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Log.d(TAG,"Emergency button: "+emg_button);
                     }
                 }
-            })
+            });
         }
         else{
             emg_button=0;
