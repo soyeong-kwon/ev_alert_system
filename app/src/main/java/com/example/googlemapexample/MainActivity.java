@@ -78,27 +78,33 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
     private GoogleMap mMap;
     private Marker[] currentMarker = new Marker[100];
+    private List<LatLng>Locations= new ArrayList<LatLng>();
 
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
+    private static boolean ID=true;
     //gps가 켜져 있는 동안에 실시간으로 바뀌는 위치정보를 얻기 위함
     private static final int UPDATE_INTERVAL_MS = 3000;// 3초
     private static final int FASTEST_UPDATE_INTERVAL_MS = 2000; // 2초
+
     // onRequestPermissionsResult에서 수신된 결과에서 ActivityCompat.requestPermissions를 사용한 퍼미션 요청을 구별하기 위해 사용됩니다.
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     boolean needRequest = false;
     private int wait = 0;
-    private final static int myLatLng = 99;
+
     private ToggleButton tb;
     private int emg_button=1;
+    private static double min=1000;
 
     private  String PhoneNum = "";
+
     //private String PhoneNum = "010-9271-3205";
 
     String[] REQUIRED_PERMISSIONS = {
@@ -139,12 +145,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         tb=(ToggleButton)this.findViewById(R.id.togglebutton);
-        tb.setText("버튼을 클릭하실 수 없습니다.");
+
+
     }
 
-    private void buttonactivate(boolean emergency) {
+    private void buttonactivate() {
         Log.d(TAG,"Emergency button: "+ emg_button);
-        if(emergency){
+        Log.d(TAG,"ID : "+ ID);
+
+        if(ID){
             Toast.makeText(getApplicationContext(),"긴급 자동차" , Toast.LENGTH_SHORT).show();
             Log.d(TAG,"버튼: 사용 가능");
 
@@ -211,9 +220,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
          */
-
-
-
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
         mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
@@ -223,6 +229,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.d(TAG, "wait1 = "+wait);
             }
         });
+
+        Response.Listener<String> checkEmergency=new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try{
+                    JSONObject jsonObject2=new JSONObject(response);
+                    ID=jsonObject2.getBoolean("ID");
+                    Log.d(TAG,"ID 넘버:"+ID);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        IDRequest idRequest=new IDRequest(PhoneNum, checkEmergency);
+        RequestQueue IDqueue=Volley.newRequestQueue(MainActivity.this);
+        IDqueue.add(idRequest);
     }
 
     LocationCallback locationCallback = new LocationCallback() {
@@ -237,15 +260,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //location = locationList.get(0);
 
                 currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                String markerSnippet = "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude());
+                String markerSnippet = "위도:" + location.getLatitude() + " 경도:" + location.getLongitude();
 
-
-
-                    /* 현재 위치정보 DB저장 */
-                    String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
-                    String Longitude = String.valueOf(location.getLongitude());
-                    Log.d(TAG, "PhoneNum : "+PhoneNum);
-
+                /* 현재 위치정보 DB저장 */
+                String Latitude = String.valueOf(location.getLatitude()); // 위치정보 받아서 string 변수에 넣기
+                String Longitude = String.valueOf(location.getLongitude());
                 Log.d(TAG, "PhoneNum : "+PhoneNum);
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() { // php 접속 응답 확인
@@ -254,14 +273,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onResponse(String response) {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            boolean emergency = jsonObject.getBoolean("emergency");
-                            Log.d(TAG, "emergency : "+emergency);
-
                             int number = jsonObject.getInt("number");
                             Log.d(TAG,"number : " + number);
+                            String test=jsonObject.getString("test");
+                            Log.d(TAG,"test : " + test);
+
                             String[] lat = new String[number+2];
                             String[] lng = new String[number+2];
                             Log.d(TAG, "String success !!");
+
 
                             while(number>=0) {
                                 lat[number] = jsonObject.getString("Latitude"+number);
@@ -271,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 number--;
                             }
                             setCurrentLocation(lat, lng); //현재 위치에 마커 생성
-                            buttonactivate(emergency);
+                            buttonactivate();
                         }
 
                         catch (JSONException e) {
@@ -282,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 };
 
                 // 서버로 Volley를 이용해서 요청
-                AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, emg_button, responseListener);
+                AddressRequest addressRequest = new AddressRequest(Latitude, Longitude, PhoneNum, emg_button,ID,responseListener);
                 RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
                 queue.add(addressRequest);
 
@@ -303,9 +323,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     };
-
-
-
 
     @SuppressLint({"MissionPermission", "HardwareIds"})
     private void getPermission(){
@@ -344,13 +361,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
         }
+
     };
-
-
-
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void setCurrentLocation(String[] lat, String[] lng) {
-
         int i=0;
+        double distance;
+        int bool_warning = 0;
 
         while(currentMarker[i]!=null){
             currentMarker[i].remove();
@@ -366,10 +383,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng currentLatLng = new LatLng(latitude, longitude); // maker 위치 ( 0.001 = 약 100m )
             Log.d(TAG, "currentLatLng : "+latitude + ", "+longitude);
 
-            if (getDistance(currentPosition, currentLatLng) < 200 && getDistance(currentPosition, currentLatLng)!=0) { // 반경 내 마커가 있을 때,
+            if (getDistance(currentPosition, currentLatLng) < 500 && getDistance(currentPosition, currentLatLng)!=0) { // 반경 내 마커가 있을 때,
                 Log.d(TAG, "WARRING !! :" + getDistance(currentPosition, currentLatLng));
-                double distance = getDistance(currentPosition, currentLatLng);
-                //warning(distance);
+                distance = getDistance(currentPosition, currentLatLng);
+                if (distance<min){
+                    min = distance;
+                }
+                bool_warning = 1;
             }
 
             MarkerOptions markerOptions = new MarkerOptions();
@@ -384,14 +404,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             i++;
 
         }
+
+        if (bool_warning == 1) { // 반경 내 마커가 있을 때,
+            warning(min);
+            min=1000;
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void warning(double distance){
-        if(emg_button==0){
-            soundwarning(distance);
-            viewwarning();
-        }
+        soundwarning(distance);
+        viewwarning();
     }
 
     public void soundwarning(double distance){
@@ -399,6 +422,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         MediaPlayer player; //소리 알람 객체
         vibrator=(Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(new long []{500,1000,500,1000},-1);
+
         if(distance<=500 && distance>=200)
         {
             player=MediaPlayer.create(this,R.raw.emergency_500m);
@@ -407,16 +431,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         else if(distance<200&&distance>=100)
         {
             player=MediaPlayer.create(this,R.raw.emergency_200m);
+            Log.d(TAG, "distance100이상: "+distance);
             player.start();
         }
         else if(distance<100&&distance>=50)
         {
             player=MediaPlayer.create(this,R.raw.emergency_nearby);
+            Log.d(TAG, "distance50이상: "+distance);
             player.start();
         }
-        else if(distance<50&&distance<=10)
+        else if(distance<50&&distance>=10)
         {
             player=MediaPlayer.create(this,R.raw.little_urgent);
+            Log.d(TAG, "distance10이상: "+distance);
             player.start();
         }
 
