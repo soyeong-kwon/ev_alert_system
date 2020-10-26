@@ -151,9 +151,22 @@
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
 
-                                                <button id="send" type="submit" class="btn btn-success" data-target="#layerpop" data-toggle="modal" onclick="getElement();">등록 요청하기</button><br/>
+                                                <button onclick="confirmModal()" id="send" type="submit" class="btn btn-success" data-target="#layerpop" data-toggle="modal" onclick="getElement();">등록 요청하기</button><br/>
                                                 <!-- submit type은 action을 php로 넘겨줍니다 -->
 
+                                                <!-- <div></div>
+                                                        <button onclick="confirmModal()">send</button> 
+                                                        <script>
+                                                          function confirmModal() {
+                                                            if (window.confirm("이미 등록되어있는 핸드폰 번호입니다. 다시 시도해주세요.")) {
+                                                              document.body.style.background = "#1abc9c";
+                                                            } else {
+                                                              console.log("취소. 변화 없음");
+                                                            }
+                                                          }
+                                                        </script> -->
+
+                                                        
                                                 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
 					                                    <div class="modal-content">
