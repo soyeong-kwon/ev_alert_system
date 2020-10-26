@@ -98,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ToggleButton tb;
     private int emg_button=1;
 
-    private  String PhoneNum = "";
-    //private String PhoneNum = "010-6359-0850";
+    //private  String PhoneNum = "";
+    private String PhoneNum = "010-6359-0850";
 
     String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -181,9 +181,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         setDefaultLocation();
-        getPermission();
+        //getPermission();
 
-        /*
+
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
 
-         */
+
 
 
 
