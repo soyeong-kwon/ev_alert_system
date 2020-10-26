@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static double min=1000;
 
 
-    private  String PhoneNum = "";
-    //private String PhoneNum = "010-9271-3205";
+    //private  String PhoneNum = "";
+    private String PhoneNum = "010-9271-3205";
 
     String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onCheckedChanged(CompoundButton compoundButton, boolean on) {
                     if(on){
                         tb.setText("일반자동차");
-                        emg_button=1;
+                        emg_button=0;
                         Log.d(TAG,"Emergency button: "+ emg_button);
                     }
                     else{
@@ -188,9 +188,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         setDefaultLocation();
-        getPermission();
+        //getPermission();
 
-        /*
+
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
         
-         */
+
 
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(18));

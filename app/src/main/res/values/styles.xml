@@ -12,7 +12,6 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
     <style name="ToggleButton.CustomTheme" parent="Theme.AppCompat.Light">
