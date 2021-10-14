@@ -1,4 +1,4 @@
-# Project: Dajung-App
+# Project: Dajung-Web
 * 긴급 자동차 위치 알림 서비스
 * 2020 이브와 ICT멘토링
 
