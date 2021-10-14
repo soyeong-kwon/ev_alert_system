@@ -10,7 +10,7 @@
 <img src="/doc/imgs/flow.png" width="100%">
 
 ## 1. Develop Environment
-<img src="/doc/imgs/environment.png" width="100%">
+<img src="/doc/imgs/environment.PNG" width="100%">
 
 ## 2. Function
 * 긴급자동차 등록 기능
@@ -21,4 +21,4 @@
 * 긴급자동차 간 거리에 따른 알림 기능
 
 ## 3. UI
-<img src="/doc/imgs/app.png" width="100%">
+<img src="/doc/imgs/app.png" width="230" height="400">
