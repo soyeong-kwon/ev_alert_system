@@ -20,7 +20,7 @@
 * 긴급자동차 운전자 등록정보 삭제
 
 ## 3. UI
-<img src="/doc/imgs/tables.png" width="600" height="230">
+<img src="/doc/imgs/tables.png"  width="50%">
 
 
-<img src="/doc/imgs/delete.png" width="600" height="230">
+<img src="/doc/imgs/delete.png"  width="50%">
