@@ -7,10 +7,10 @@
 이로 인해 발생하는 사고들을 예방하기 위해 운전자 앱에서 긴급자동차의 위치를 파악할 수 있게 한다.
 
 ## 0. Overview
-<img src="/doc/imgs/flow.png" width="100%">
+<img src="/doc/imgs/flow.png" width="50%">
 
 ## 1. Develop Environment
-<img src="/doc/imgs/environment.PNG" width="100%">
+<img src="/doc/imgs/environment.PNG" width="50%">
 
 ## 2. Function
 * 긴급자동차 등록 기능
