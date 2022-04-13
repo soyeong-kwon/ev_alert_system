@@ -1,35 +1,38 @@
-# Project: Dajung-Web
-* 긴급 자동차 위치 알림 서비스
-* 2020 이브와 ICT멘토링
-* 주최 : 과학기술정보통신부
-* 주관 : 정보통신기획평가원, (사)여성기업인협회
-* 2020.05.13 ~ 2020.11.30
+# Emergency Vehicle Notification Service : web
+[2020] Emergency Vehicle Notification Service : web code 
+_Update: 2022-04-13_  
+## **Index**
++ [About this project](#about-this-project)
++ [Overview](#overview)
+  + [Goal](#goal)
+  + [Flow](#flow)
++ [Detail Function](#detail-function)
++ [Environment](#environment)
 
-## 0. Overview
-이 프로젝트는 긴급자동차로 인한 사고를 예방하기 위해서 고안된 프로젝트이다.
-민원으로 인해 긴급자동차의 사이렌 소리가 줄어들고, 주변 소음이나 차 내부 소음으로 인해 도로 교통상황을 신속하게 파악하기 어렵다.
-이로 인해 발생하는 사고들을 예방하기 위해 운전자 앱에서 긴급자동차의 위치를 파악할 수 있게 한다.  
-<img src="/doc/imgs/flow.png" width="50%">
+## **About this project**
+<img src = "https://user-images.githubusercontent.com/68631435/163201142-024fc295-7b25-4a72-b2cc-52f14154a010.png" width="60%" height="40%">   
 
-## 1. Goals
-* 민원으로 인한 사이렌 소리 저하로, 긴급자동차의 사이렌 소리를 잘 듣지 못해 발생하는 사고를 예방하기 위해 고안된 프로젝트이다.
-* 운전자가 음악을 듣고 있거나 다른 주변 소음으로 인해 사이렌 소리를 듣지 못하는 경우 앱을 통해 운전자에게 긴급자동차의 접근을 알린다. 
-* 긴급자동차의 접근과 경로를 운전자 시야에 들어오지 않는 경우, 운전자가 앱을 통해 알림을 받음으로써 긴급자동차의 원활한 이동을 도울 수 있도록 한다.
++ 프로젝트 이름: 긴급자동차 위치 알림 서비스
++ 프로젝트 진행 목적: ICT 멘토링 및 공모전 출전    
+▻ (이브와 ICT 멘토링) 참고 url: https://www.hanium.or.kr/portal/kibwa/businessOverview.do  
++ 프로젝트 진행 기간: 2020년 5월 ~ 2020년 11월  
++ 프로젝트 참여 인원: 5명  
+## **Overview** 
+> ### **Goal**
++ (목적) 운전자에게 긴급자동차의 접근을 알림으로서 긴급자동차 경로 확보를 도우고 2차 사고 발생을 예방하기 위함.  
++ (필요성) 운전자의 시야 확보가 불가능한 상황에서 긴급자동차의 위치를 실시간으로 알려 신속하고 원활한 이동을 도움.   
+> ### **Flow**
+<img src = "https://user-images.githubusercontent.com/68631435/163202194-e6f579cf-888a-45f1-9d44-0b9036d7d5e8.png" width="45%" height="45%">   
+<img src = "https://user-images.githubusercontent.com/68631435/163204774-367f1ab7-9e89-4b02-bd14-79ec5ee89c84.png" width="50%" height="height 20%">    
 
-## 2. Function
-* 긴급자동차 등록 기능
-* 긴급자동차에 설치된 단말기 또는 휴대폰의 위치정보 전송 기능
-* 각 사용자의 단말기 또는 휴대폰으로 긴급자동차 위치정보 수신 기능
-* 위치정보 전송 ON/OFF 기능
-* 반경 내 긴급자동차 위치 시 알림
-* 긴급자동차 간 거리에 따른 알림 기능 
+## **Detail Function**
+> ### **Server**   
 
-## 3. Develop Environment
-<img src="/doc/imgs/environment.PNG" width="50%">
 
-## 4. App UI
-<img src="/doc/imgs/app.png" width="230" height="400">
-
-## 5. Web UI
-<img src="/doc/imgs/tables.png"  width="50%">  
-<img src="/doc/imgs/delete.png"  width="50%">
+## **Environment** 
++ EC2(AWS): Amazon Linux release 2  
++ Putty : 리눅스 서버 원격 접속용 툴  
++ Apache(2.4.43) : 관리자 웹 페이지를 구동하는 웹 서버 프로그램  
++ Maria DB : 단말기 데이터를 저장 및 관리하는 데이터베이스 시스템  
++ PHP(5.4.16) : 서버 관리자 웹 페이지 처리 모듈 작성 언어  
++ Visual Studio Code : 웹 서버 HTML, CSS, Javascript, PHP 개발
