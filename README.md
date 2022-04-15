@@ -1,6 +1,6 @@
 # Emergency Vehicle Notification Service : web
-[2020] Emergency Vehicle Notification Service : web code    
-_Update: 2022-04-15_  
+[2020] Emergency Vehicle Notification Service : web code 
+_Update: 2022-04-13_  
 ## **Index**
 + [About this project](#about-this-project)
 + [Overview](#overview)
@@ -32,6 +32,7 @@ _Update: 2022-04-15_
 > ### **Server**   
 > 본 프로젝트의핵심 기능을 구현한 코드를 설명하였음.     
 #### **(1) address.php : 위치 비교**   
+#### path: \gentelella-master\production\ address.php
 ``` php
 $latitude = $_POST['Latitude'];
 $longitude = $_POST['Longitude'];
@@ -106,6 +107,7 @@ echo json_encode($response);
 + (3) 생성된 배열을 Client에 전송함.   
 
 #### **(2) turntonormal.php : 긴급자동차 운전자가 일반자동차 운전자로 변경**   
+#### path : \gentelella-master\production\turntonormal.php  
 ``` php
 $response = array();
 $response["inaddress"]=false;
