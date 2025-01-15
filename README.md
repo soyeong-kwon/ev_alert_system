@@ -1,5 +1,5 @@
-# Emergency Vehicle Notification Service   
-[2020] Emergency Vehicle Notification Service   
+# EV(Emergency Vehicle) alert system
+[2020] Dajung app: EV(Emergency Vehicle) alert system  
 _Update: 2022-05-02_  
 ## **Index**
 + [About this project](#about-this-project)
