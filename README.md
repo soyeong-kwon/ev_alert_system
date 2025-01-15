@@ -1,4 +1,4 @@
-# EV(Emergency Vehicle) alert system
+# EV alert system
 [2020] Dajung app: EV(Emergency Vehicle) alert system  
 _Update: 2022-05-02_  
 ## **Index**
